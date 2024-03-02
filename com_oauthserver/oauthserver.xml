@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="component" method="upgrade">
+    <name>COM_OAUTHSERVER</name>
+    <description>COM_OAUTHSERVER_DESCRIPTION</description>
+    <author>Artem Vasilev</author>
+    <authorEmail>kern.usr@gmial.com</authorEmail>
+    <authorUrl>https://webmasterskaya.xyz</authorUrl>
+    <creationDate>March 2024</creationDate>
+    <copyright>Copyright (C) 2024 Webmasterskaya. All rights reserved.</copyright>
+    <license>MIT; see LICENSE.txt</license>
+    <version>RELEASE_VERSION</version>
+    <namespace path="src">Webmasterskaya\Component\OauthServer</namespace>
+    <install>
+        <sql>
+            <file driver="mysql" charset="utf8">sql/install.mysql.utf8.sql</file>
+        </sql>
+    </install>
+    <uninstall>
+        <sql>
+            <file driver="mysql" charset="utf8">sql/uninstall.mysql.utf8.sql</file>
+        </sql>
+    </uninstall>
+    <update>
+        <schemas>
+            <schemapath type="mysql">sql/updates/mysql</schemapath>
+        </schemas>
+    </update>
+    <files folder="site">
+        <folder>forms</folder>
+        <folder>src</folder>
+        <folder>tmpl</folder>
+    </files>
+    <languages folder="site">
+        <language tag="en-GB">language/en-GB/en-GB.com_oauthserver.ini</language>
+        <language tag="en-GB">language/en-GB/en-GB.com_oauthserver.sys.ini</language>
+        <language tag="ru-RU">language/ru-RU/ru-RU.com_oauthserver.ini</language>
+        <language tag="ru-RU">language/ru-RU/ru-RU.com_oauthserver.sys.ini</language>
+    </languages>
+    <administration>
+        <menu>COM_OAUTHSERVER</menu>
+        <submenu>
+            <menu
+                    link="option=com_oauthserver"
+                    view="clients"
+                    img="class:clients"
+                    alt="Oauth Server/Clients"
+            >
+                com_oauthserver_clients
+            </menu>
+        </submenu>
+        <files folder="administrator">
+            <folder>forms</folder>
+            <folder>services</folder>
+            <folder>sql</folder>
+            <folder>src</folder>
+            <folder>tmpl</folder>
+            <filename>access.xml</filename>
+            <filename>config.xml</filename>
+        </files>
+        <languages folder="admin">
+            <language tag="en-GB">language/en-GB/en-GB.com_oauthserver.ini</language>
+            <language tag="en-GB">language/en-GB/en-GB.com_oauthserver.sys.ini</language>
+            <language tag="ru-RU">language/ru-RU/ru-RU.com_oauthserver.ini</language>
+            <language tag="ru-RU">language/ru-RU/ru-RU.com_oauthserver.sys.ini</language>
+        </languages>
+    </administration>
+</extension>

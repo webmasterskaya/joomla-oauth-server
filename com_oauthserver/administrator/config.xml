@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<config addfieldprefix="Joomla\Component\RadicalMart\Administrator\Field">
+    <fieldset name="general" label="COM_RADICALMART_GENERAL">
+        <fieldset name="general_root" label="COM_RADICALMART_GENERAL">
+            <field name="legacy_mode" type="radio"
+                   label="COM_RADICALMART_PARAMS_LEGACY_MODE"
+                   class="btn-group btn-group-yesno"
+                   default="1">
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+        </fieldset>
+    </fieldset>
+    <fieldset name="permissions"
+              label="JCONFIG_PERMISSIONS_LABEL"
+              description="JCONFIG_PERMISSIONS_DESC">
+        <field name="rules" type="rules"
+               label="JCONFIG_PERMISSIONS_LABEL"
+               class="inputbox"
+               validate="rules"
+               filter="rules"
+               component="com_oauthserver"
+               section="component"/>
+    </fieldset>
+</config>
