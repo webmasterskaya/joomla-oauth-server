@@ -9,6 +9,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\GenericDataException;
 use Joomla\CMS\Object\CMSObject;
 use Joomla\CMS\Pagination\Pagination;
+use Joomla\CMS\Toolbar\Toolbar;
 use Joomla\CMS\Toolbar\ToolbarFactoryInterface;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 
@@ -117,7 +118,7 @@ class HtmlView extends \Joomla\CMS\MVC\View\HtmlView
         $canDo = ContentHelper::getActions('com_oauthserver', 'clients');
 
         $user = $this->getCurrentUser();
-        $toolbar = Factory::getContainer()->get(ToolbarFactoryInterface::class)->createToolbar('toolbar');
+        $toolbar = Toolbar::getInstance('toolbar');
 
         // Set page title
         ToolbarHelper::title(Text::_('COM_OAUTHSERVER') . ': ' . Text::_('COM_OAUTHSERVER_CLIENTS'));

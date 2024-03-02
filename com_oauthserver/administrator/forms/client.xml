@@ -4,20 +4,48 @@
         <inlinehelp button="show"/>
     </config>
     <fieldset name="global">
-        <field name="client_name" type="text"
-               label="COM_OAUTHSERVER_CLIENT_FORM_CLIENT_NAME_LABEL"
-               description="COM_OAUTHSERVER_CLIENT_FORM_CLIENT_NAME_DESCRIPTION"
+        <field name="name"
+               type="text"
+               label="COM_OAUTHSERVER_CLIENT_NAME_LABEL"
+               description="COM_OAUTHSERVER_NAME_DESCRIPTION"
                required="1"
         />
-        <field name="client_token"
+        <field name="public"
+               type="radio"
+               layout="joomla.form.field.radio.switcher"
+               label="COM_OAUTHSERVER_CLIENT_PUBLIC_LABEL"
+               description="COM_OAUTHSERVER_CLIENT_PUBLIC_DESCRIPTION"
+               filter="boolean"
+               default="0">
+            <option value="1">JYES</option>
+            <option value="0">JNO</option>
+        </field>
+        <field name="redirect_uri"
+               type="url"
+               filter="url"
+               validate="url"
+               label="COM_OAUTHSERVER_CLIENT_REDIRECT_URI_LABEL"
+               description="COM_OAUTHSERVER_CLIENT_REDIRECT_URI_DESCRIPTION"/>
+
+        <field name="allow_plain_text_pkce"
+               type="radio"
+               layout="joomla.form.field.radio.switcher"
+               label="COM_OAUTHSERVER_CLIENT_ALLOW_PLAIN_TEXT_PKCE_LABEL"
+               description="COM_OAUTHSERVER_CLIENT_ALLOW_PLAIN_TEXT_PKCE_DESCRIPTION"
+               filter="boolean"
+               default="1">
+            <option value="1">JYES</option>
+            <option value="0">JNO</option>
+        </field>
+        <field name="identifier"
                type="text"
                readonly="1"
-               label="COM_OAUTHSERVER_CLIENT_FORM_CLIENT_TOKEN_LABEL"
-               description="COM_OAUTHSERVER_CLIENT_FORM_CLIENT_TOKEN_DESCRIPTION"/>
-        <field name="client_id"
+               label="COM_OAUTHSERVER_CLIENT_IDENTIFIER_LABEL"
+               description="COM_OAUTHSERVER_CLIENT_IDENTIFIER_DESCRIPTION"/>
+        <field name="secret"
                type="text"
                readonly="1"
-               label="COM_OAUTHSERVER_CLIENT_FORM_CLIENT_ID_LABEL"
-               description="COM_OAUTHSERVER_CLIENT_FORM_CLIENT_ID_DESCRIPTION"/>
+               label="COM_OAUTHSERVER_CLIENT_SECRET_LABEL"
+               description="COM_OAUTHSERVER_CLIENT_SECRET_DESCRIPTION"/>
     </fieldset>
 </form>
