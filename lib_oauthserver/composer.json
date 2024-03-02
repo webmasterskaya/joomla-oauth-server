@@ -1,0 +1,21 @@
+{
+  "name": "webmaserskaya/lib_oauthserver",
+  "type": "library",
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "Webmaserskaya\\Joomla\\OauthServer\\": "src/"
+    }
+  },
+  "authors": [
+    {
+      "name": "Artem Vasilev",
+      "email": "kern.usr@gmial.com"
+    }
+  ],
+  "minimum-stability": "stable",
+  "require": {
+    "php": "^8.0",
+    "league/oauth2-server": "^8.5"
+  }
+}
