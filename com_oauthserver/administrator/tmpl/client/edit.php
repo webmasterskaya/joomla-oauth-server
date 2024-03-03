@@ -19,19 +19,22 @@ $wa->useScript('keepalive')
 
 <form action="<?php echo Route::_('index.php?option=com_oauthserver&layout=edit&id=' . (int) $this->item->id); ?>" method="post" name="adminForm" id="client-form" aria-label="<?php echo Text::_('COM_OAUTHSERVER_CLIENT_FORM_' . ((int) $this->item->id === 0 ? 'NEW' : 'EDIT'), true); ?>" class="form-validate">
 
-    <?php echo LayoutHelper::render('joomla.edit.title_alias', $this); ?>
-
     <div class="main-card">
         <?php echo HTMLHelper::_('uitab.startTabSet', 'myTab', ['active' => 'details', 'recall' => true, 'breakpoint' => 768]); ?>
 
-        <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'details', Text::_('COM_BANNERS_BANNER_DETAILS')); ?>
+        <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'details', Text::_('COM_OAUTHSERVER_CLIENT_DETAILS')); ?>
 
         <div class="row">
             <div class="col-12">
                 <fieldset id="fieldset-publishingdata" class="options-form">
                     <legend><?php echo Text::_('COM_OAUTHSERVER_CLIENT'); ?></legend>
                     <div>
-                        <?php echo $this->form->renderFieldset('global');?>
+                        <?php echo $this->form->renderField('name'); ?>
+                        <?php echo $this->form->renderField('public'); ?>
+                        <?php echo $this->form->renderField('redirect_uri'); ?>
+                        <?php echo $this->form->renderField('allow_plain_text_pkce'); ?>
+                        <?php echo $this->form->renderField('identifier'); ?>
+                        <?php echo $this->form->renderField('secret'); ?>
                     </div>
                 </fieldset>
             </div>

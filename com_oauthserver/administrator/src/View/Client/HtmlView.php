@@ -116,8 +116,9 @@ class HtmlView extends \Joomla\CMS\MVC\View\HtmlView
                             $childBar->save2new('client.save2new');
                         }
                         $childBar
-                            ->standardButton('save-reset', 'COM_OAUTHSERVER_CLIENT_SAVE_AND_RESET')
+                            ->standardButton('save-reset', 'COM_OAUTHSERVER_SAVE_AND_RESET')
                             ->task('client.save2reset')
+                            ->icon('icon-sync')
                             ->formValidation(true);
                     }
                 }
