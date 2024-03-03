@@ -2,60 +2,60 @@
 
 namespace Webmasterskaya\Plugin\System\OauthServer\Extension;
 
-use Joomla\CMS\Application\CMSApplicationInterface;
+use Joomla\CMS\Factory;
 use Joomla\CMS\Plugin\CMSPlugin;
+use Joomla\CMS\Router\SiteRouter;
 use Joomla\CMS\Uri\Uri;
 use Joomla\Event\SubscriberInterface;
 
 class Plugin extends CMSPlugin implements SubscriberInterface
 {
-    /**
-     * Affects constructor behavior. If true, language files will be loaded automatically.
-     *
-     * @var    boolean
-     * @since  3.1
-     */
-    protected $autoloadLanguage = false;
-
-    /**
-     * The application object
-     *
-     * @var    CMSApplicationInterface
-     *
-     * @since  4.2.0
-     */
-    private $application;
-
     public static function getSubscribedEvents(): array
     {
-        return ['onAfterInitialise' => 'onAfterInitialise'];
+        return ['onAfterInitialise' => 'attachOauthRouter'];
     }
 
-    public function onAfterInitialise(): void
+    public function attachOauthRouter(): void
     {
-        if (!$this->app->isClient('site')) {
+        /** @var \Joomla\CMS\Application\SiteApplication $app */
+        $app = $this->getApplication();
+
+        if (!$app->isClient('site')) {
             return;
         }
 
-        $uri = Uri::getInstance();
-        $path = $uri->getPath();
+        /** @var \Joomla\CMS\Router\SiteRouter $siteRouter */
+        $siteRouter = Factory::getContainer()->get(SiteRouter::class);
+        $siteRouter->attachParseRule([$this, 'parseOauthRoute'], $siteRouter::PROCESS_BEFORE);
+    }
 
-        // Адрес сервера аутентификации должен быть статичным,
-        // чтобы гарантировать 100% доступность сервера
-        if (str_starts_with($path, '/login/oauth/') === false) {
+    /**
+     * @param \Joomla\CMS\Router\SiteRouter $router
+     * @param \Joomla\CMS\Uri\Uri $uri
+     * @return void
+     * @since version
+     */
+    public function parseOauthRoute(SiteRouter &$router, Uri &$uri): void
+    {
+        $route = trim($uri->getPath(), '/');
+
+        if (empty($route)) {
             return;
         }
 
-        $parts = explode('/', $path);
-
-        if(empty($parts[2])){
-            // TODO: Проверить, как стандартный роутер обработает этот вопрос и как отреагируют приложения на 404 от Joomla
+        // TODO: Переделать на ComponentRouter (пример в Joomla\CMS\Router\SiteRouterЖ::parseSefRoute())
+        //       1. Зарегистрировать роутер компонента $router->setComponentRouter()
+        //       2. Вызвать $router->getComponentRouter($component)
+        if (!str_starts_with($route, 'login/oauth')) {
             return;
         }
 
-        $option = 'com_oauthserver';
-        $task = $parts[2];
+        $segments = explode('/', $route);
 
-        // TODO: Ставим в input option, task и view и запускаем компонент com_oauthserver
+        $uri->setVar('option', 'com_oauthserver');
+        $uri->setVar('task', 'login.' . $segments[2]);
+        $uri->setVar('view', 'default');
+
+        $uri->setPath('');
     }
 }
