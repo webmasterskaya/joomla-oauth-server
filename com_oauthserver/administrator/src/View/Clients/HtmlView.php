@@ -129,9 +129,11 @@ class HtmlView extends \Joomla\CMS\MVC\View\HtmlView
             $toolbar->addNew('client.add');
         }
 
-        // Add actions dropdown
-        if (!$this->isEmptyState) {
-            // TODO: Что мы тут в дропдаун пихаем?
+        if ($canDo->get('core.delete')) {
+            $toolbar->delete('clients.delete')
+                ->text('JTOOLBAR_DELETE')
+                ->message('JGLOBAL_CONFIRM_DELETE')
+                ->listCheck(true);
         }
 
         // Add preferences button
