@@ -1,13 +1,99 @@
 <?xml version="1.0"?>
-<config addfieldprefix="Joomla\Component\RadicalMart\Administrator\Field">
-    <fieldset name="general" label="COM_RADICALMART_GENERAL">
-        <fieldset name="general_root" label="COM_RADICALMART_GENERAL">
-            <field name="legacy_mode" type="radio"
-                   label="COM_RADICALMART_PARAMS_LEGACY_MODE"
-                   class="btn-group btn-group-yesno"
-                   default="1">
-                <option value="1">JYES</option>
+<config>
+    <fieldset name="general" label="COM_OAUTHSERVER_GENERAL">
+        <fieldset name="authorization_server" label="authorization_server">
+            <field name="private_key"
+                   type="string"
+                   label="COM_OAUTHSERVER_PARAMS_PRIVATE_KEY_LABEL"
+                   description="COM_OAUTHSERVER_PARAMS_PRIVATE_KEY_DESCRIPTION"
+                   required="1"
+                   default=""/>
+            <field name="private_key_passphrase"
+                   type="string"
+                   label="COM_OAUTHSERVER_PARAMS_PRIVATE_KEY_PASSPHRASE_LABEL"
+                   default=""/>
+            <field name="encryption_key"
+                   type="string"
+                   label="COM_OAUTHSERVER_PARAMS_ENCRYPTION_KEY_LABEL"
+                   description="COM_OAUTHSERVER_PARAMS_ENCRYPTION_KEY_DESCRIPTION"
+                   required="1"
+                   default=""/>
+            <field name="encryption_key_type"
+                   type="list"
+                   label="COM_OAUTHSERVER_PARAMS_ENCRYPTION_KEY_TYPE_LABEL"
+                   required="1"
+                   default="plain">
+                <option value="plain">Plain</option>
+                <option value="defuse">Defuse</option>
+            </field>
+            <field name="access_token_ttl"
+                   type="string"
+                   label="COM_OAUTHSERVER_PARAMS_ACCESS_TOKEN_TTL_LABEL"
+                   description="COM_OAUTHSERVER_PARAMS_ACCESS_TOKEN_TTL_DESCRIPTION"
+                   required="1"
+                   default="PT1H"/>
+            <field name="access_token_ttl"
+                   type="string"
+                   label="COM_OAUTHSERVER_PARAMS_ACCESS_TOKEN_TTL_LABEL"
+                   description="COM_OAUTHSERVER_PARAMS_ACCESS_TOKEN_TTL_DESCRIPTION"
+                   required="1"
+                   default="PT1H"/>
+            <field name="refresh_token_ttl"
+                   type="string"
+                   label="COM_OAUTHSERVER_PARAMS_REFRESH_TOKEN_TTL_LABEL"
+                   description="COM_OAUTHSERVER_PARAMS_REFRESH_TOKEN_TTL_DESCRIPTION"
+                   required="1"
+                   default="P1M"/>
+            <field name="auth_code_ttl"
+                   type="string"
+                   label="COM_OAUTHSERVER_PARAMS_AUTH_CODE_TTL_LABEL"
+                   description="COM_OAUTHSERVER_PARAMS_AUTH_CODE_TTL_DESCRIPTION"
+                   required="1"
+                   default="PT10M"/>
+            <field name="enable_client_credentials_grant"
+                   type="radio"
+                   label="COM_OAUTHSERVER_PARAMS_ENABLE_CLIENT_CREDENTIALS_GRANT_LABEL"
+                   layout="joomla.form.field.radio.switcher"
+                   filter="integer"
+                   default="0">
                 <option value="0">JNO</option>
+                <option value="1">JYES</option>
+            </field>
+            <field name="enable_password_grant"
+                   type="radio"
+                   label="COM_OAUTHSERVER_PARAMS_ENABLE_PASSWORD_GRANT_LABEL"
+                   layout="joomla.form.field.radio.switcher"
+                   filter="integer"
+                   default="0">
+                <option value="0">JNO</option>
+                <option value="1">JYES</option>
+            </field>
+            <field name="enable_refresh_token_grant"
+                   type="radio"
+                   label="COM_OAUTHSERVER_PARAMS_ENABLE_REFRESH_TOKEN_GRANT_LABEL"
+                   layout="joomla.form.field.radio.switcher"
+                   filter="integer"
+                   default="1">
+                <option value="0">JNO</option>
+                <option value="1">JYES</option>
+            </field>
+            <field name="enable_auth_code_grant"
+                   type="radio"
+                   label="COM_OAUTHSERVER_PARAMS_ENABLE_AUTH_CODE_GRANT_LABEL"
+                   layout="joomla.form.field.radio.switcher"
+                   filter="integer"
+                   default="1">
+                <option value="0">JNO</option>
+                <option value="1">JYES</option>
+            </field>
+            <field name="require_code_challenge_for_public_clients"
+                   type="radio"
+                   label="COM_OAUTHSERVER_PARAMS_REQUIRE_CODE_CHALLENGE_FOR_PUBLIC_CLIENTS_LABEL"
+                   layout="joomla.form.field.radio.switcher"
+                   filter="integer"
+                   default="1">
+                <option value="0">JNO</option>
+                <option value="1">JYES</option>
             </field>
         </fieldset>
     </fieldset>
