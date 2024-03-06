@@ -9,6 +9,8 @@ use Joomla\CMS\MVC\Model\AdminModel;
 
 class ClientModel extends AdminModel
 {
+    use GetItemByIdentifierTrait;
+
     /**
      * The type alias for this content type.
      *
@@ -16,15 +18,6 @@ class ClientModel extends AdminModel
      * @since  version
      */
     public $typeAlias = 'com_oauthserver.client';
-
-    /**
-     * Client item.
-     *
-     * @var  array|null
-     *
-     * @since  1.0.0
-     */
-    protected ?array $_item = null;
 
     /**
      * @param array $data
@@ -87,10 +80,10 @@ class ClientModel extends AdminModel
 
         if ($task === 'save2reset' || empty($table->id)) {
             $table->identifier = $this->generateNewIdentifier();
-            $table->secret = $table->public ? '' : $this->generateNewSecret();
+            $table->secret = !!$table->public ? '' : $this->generateNewSecret();
         }
 
-        if ($table->public) {
+        if (!!$table->public) {
             $table->secret = '';
         } else {
             if (empty($table->secret)) {
