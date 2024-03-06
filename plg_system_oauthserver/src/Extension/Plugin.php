@@ -43,7 +43,7 @@ class Plugin extends CMSPlugin implements SubscriberInterface
             return;
         }
 
-        // TODO: Переделать на ComponentRouter (пример в Joomla\CMS\Router\SiteRouterЖ::parseSefRoute())
+        // TODO: Переделать на ComponentRouter (пример в Joomla\CMS\Router\SiteRouter::parseSefRoute())
         //       1. Зарегистрировать роутер компонента $router->setComponentRouter()
         //       2. Вызвать $router->getComponentRouter($component)
         if (!str_starts_with($route, 'login/oauth')) {
