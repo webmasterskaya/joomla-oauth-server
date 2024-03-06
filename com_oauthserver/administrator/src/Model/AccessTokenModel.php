@@ -6,9 +6,10 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\MVC\Model\AdminModel;
 
-class AccessTokenModel extends AdminModel
+class AccessTokenModel extends AdminModel implements RevokedModelInterface
 {
     use GetItemByIdentifierTrait;
+    use RevokedModelTrait;
 
     public function getForm($data = [], $loadData = true): Form|bool
     {

@@ -2,16 +2,24 @@
 
 namespace Webmasterskaya\Component\OauthServer\Administrator\Table;
 
-use DateTimeImmutable;
 use Joomla\CMS\Table\Table;
 use Joomla\Database\DatabaseDriver;
-use League\OAuth2\Server\CryptKey;
-use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
-use League\OAuth2\Server\Entities\ClientEntityInterface;
-use League\OAuth2\Server\Entities\ScopeEntityInterface;
 
-class AccessTokenTable extends Table
+/**
+ * @property int $id
+ * @property string $identifier
+ * @property \DateTimeImmutable|\DateTime|string $expiry
+ * @property ?int $user_id
+ * @property string|array|null $scopes
+ * @property int $client_id
+ * @property int $revoked
+ *
+ * @since version
+ */
+class AccessTokenTable extends Table implements RevokedTableInterface
 {
+    use RevokedTableTrait;
+
     /**
      * Indicates that columns fully support the NULL value in the database
      *
