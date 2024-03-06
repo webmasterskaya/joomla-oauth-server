@@ -7,18 +7,37 @@ use Joomla\Database\DatabaseDriver;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 
 /**
- * @property int $id
- * @property string $name
- * @property string $identifier
- * @property string|null $secret
- * @property int $public
- * @property string|null $redirect_uri
- * @property int $allow_plain_text_pkce
+ * @property int $id;
+ * @property string $identifier;
+ * @property string $name;
+ * @property ?string $secret;
+ * @property string|array|null $redirect_uris;
+ * @property string|array|null $grants;
+ * @property string|array|null $scopes;
+ * @property int $active;
+ * @property int $public;
+ * @property int $allow_plain_text_pkce;
  *
  * @since version
  */
-class ClientTable extends Table implements ClientEntityInterface
+class ClientTable extends Table
 {
+    /**
+     * Indicates that columns fully support the NULL value in the database
+     *
+     * @var    boolean
+     * @since  3.10.0
+     */
+    protected $_supportNullValue = true;
+
+    /**
+     * An array of key names to be json encoded in the bind function
+     *
+     * @var    array
+     * @since  3.3
+     */
+    protected $_jsonEncode = ['redirect_uris', 'grants', 'scopes'];
+
     /**
      * Constructor.
      *
@@ -29,25 +48,5 @@ class ClientTable extends Table implements ClientEntityInterface
     public function __construct(DatabaseDriver $db)
     {
         parent::__construct('#__webmasterskaya_oauthserver_clients', 'id', $db);
-    }
-
-    public function getIdentifier()
-    {
-        return $this->identifier;
-    }
-
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    public function getRedirectUri()
-    {
-        return $this->redirect_uri;
-    }
-
-    public function isConfidential()
-    {
-        return !$this->public;
     }
 }
