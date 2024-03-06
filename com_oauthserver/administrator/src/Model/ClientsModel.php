@@ -96,7 +96,7 @@ class ClientsModel extends ListModel
 
         $query = $db->getQuery(true);
 
-        $query->select(['client.id', 'client.name', 'client.secret', 'client.identifier', 'client.public', 'client.redirect_uri', 'client.allow_plain_text_pkce'])
+        $query->select(['client.id', 'client.name', 'client.secret', 'client.identifier', 'client.public', 'client.redirect_uris', 'client.allow_plain_text_pkce', 'client.scopes', 'client.grants'])
             ->from($db->qn('#__webmasterskaya_oauthserver_clients', 'client'));
 
         // Filter by search state
