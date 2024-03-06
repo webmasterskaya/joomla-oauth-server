@@ -12,4 +12,15 @@ class AccessToken implements AccessTokenEntityInterface
     use AccessTokenTrait;
     use EntityTrait;
     use TokenEntityTrait;
+
+    public function getData(): array
+    {
+        return [
+            'identifier' => $this->getIdentifier(),
+            'expiry' => $this->getExpiryDateTime(),
+            'user_id' => $this->getUserIdentifier(),
+            'scopes' => $this->getScopes(),
+            'client_identifier' => $this->getClient()->getIdentifier()
+        ];
+    }
 }

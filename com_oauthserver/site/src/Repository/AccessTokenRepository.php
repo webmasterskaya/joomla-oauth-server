@@ -2,39 +2,77 @@
 
 namespace Webmasterskaya\Component\OauthServer\Site\Repository;
 
-use Joomla\CMS\MVC\Factory\MVCFactoryAwareTrait;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
-use League\OAuth2\Server\Entities\Traits\AccessTokenTrait;
-use League\OAuth2\Server\Entities\Traits\EntityTrait;
-use League\OAuth2\Server\Entities\Traits\TokenEntityTrait;
+use League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationException;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
+use Webmasterskaya\Component\OauthServer\Administrator\Model\AccessTokenModel;
+use Webmasterskaya\Component\OauthServer\Administrator\Model\ClientModel;
+use Webmasterskaya\Component\OauthServer\Site\Entity\AccessToken;
 
 class AccessTokenRepository implements AccessTokenRepositoryInterface
 {
-    use AccessTokenTrait;
-    use EntityTrait;
-    use TokenEntityTrait;
+    private AccessTokenModel $accessTokenModel;
+    private ClientModel $clientModel;
 
-    use MVCFactoryAwareTrait;
-
-    public function getNewToken(ClientEntityInterface $clientEntity, array $scopes, $userIdentifier = null)
+    /**
+     * @param \Webmasterskaya\Component\OauthServer\Administrator\Model\AccessTokenModel $accessTokenModel
+     * @param \Webmasterskaya\Component\OauthServer\Administrator\Model\ClientModel $clientModel
+     *
+     * @since version
+     */
+    public function __construct(AccessTokenModel $accessTokenModel, ClientModel $clientModel)
     {
-        // TODO: Implement getNewToken() method.
+        $this->accessTokenModel = $accessTokenModel;
+        $this->clientModel = $clientModel;
     }
 
-    public function persistNewAccessToken(AccessTokenEntityInterface $accessTokenEntity)
+    public function getNewToken(ClientEntityInterface $clientEntity, array $scopes, $userIdentifier = null): AccessTokenEntityInterface
     {
-        // TODO: Implement persistNewAccessToken() method.
+        $accessToken = new AccessToken();
+        $accessToken->setClient($clientEntity);
+        $accessToken->setUserIdentifier($userIdentifier);
+
+        foreach ($scopes as $scope) {
+            $accessToken->addScope($scope);
+        }
+
+        return $accessToken;
     }
 
-    public function revokeAccessToken($tokenId)
+    public function persistNewAccessToken(AccessTokenEntityInterface $accessTokenEntity): void
     {
-        // TODO: Implement revokeAccessToken() method.
+        /** @var AccessToken $accessTokenEntity */
+        $accessToken = $this->accessTokenModel->getItemByIdentifier($accessTokenEntity->getIdentifier());
+
+        if ($accessToken->id > 0) {
+            throw UniqueTokenIdentifierConstraintViolationException::create();
+        }
+
+        /** @var AccessToken $accessTokenEntity */
+        $data = $accessTokenEntity->getData();
+
+        $client = $this->clientModel->getItemByIdentifier($accessTokenEntity->getClient()->getIdentifier());
+
+        $data['client_id'] = $client->id;
+        unset($data['client_identifier']);
+
+        $this->accessTokenModel->save($data);
     }
 
-    public function isAccessTokenRevoked($tokenId)
+    public function revokeAccessToken($tokenId): void
     {
-        // TODO: Implement isAccessTokenRevoked() method.
+        $this->accessTokenModel->revoke($tokenId);
+    }
+
+    public function isAccessTokenRevoked($tokenId): bool
+    {
+        $accessToken = $this->accessTokenModel->getItemByIdentifier($tokenId);
+
+        if (!$accessToken->id) {
+            return true;
+        }
+
+        return !!$accessToken->revoked;
     }
 }
