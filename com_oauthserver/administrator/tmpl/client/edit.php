@@ -31,7 +31,7 @@ $wa->useScript('keepalive')
                     <div>
                         <?php echo $this->form->renderField('name'); ?>
                         <?php echo $this->form->renderField('public'); ?>
-                        <?php echo $this->form->renderField('redirect_uri'); ?>
+                        <?php echo $this->form->renderField('redirect_uris'); ?>
                         <?php echo $this->form->renderField('allow_plain_text_pkce'); ?>
                         <?php echo $this->form->renderField('identifier'); ?>
                         <?php echo $this->form->renderField('secret'); ?>

@@ -3,6 +3,7 @@
 namespace Webmasterskaya\Component\OauthServer\Site\Repository;
 
 use Joomla\CMS\Object\CMSObject;
+use Joomla\Utilities\ArrayHelper;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use Webmasterskaya\Component\OauthServer\Administrator\Model\ClientModel;
@@ -62,7 +63,7 @@ class ClientRepository implements ClientRepositoryInterface
         $clientEntity = new Client();
         $clientEntity->setName($client->name);
         $clientEntity->setIdentifier($client->identifier);
-        $clientEntity->setRedirectUri(array_map('strval', (array)$client->redirect_uris));
+        $clientEntity->setRedirectUri(ArrayHelper::getColumn((array)$client->redirect_uris, 'uri'));
         $clientEntity->setConfidential(!$client->public);
         $clientEntity->setAllowPlainTextPkce((bool)$client->allow_plain_text_pkce);
 
