@@ -71,7 +71,7 @@ trait RevokedModelTrait
                 $revokedColumnName = $table->getColumnAlias('revoked');
 
                 if (property_exists($table, $revokedColumnName) && $table->get($revokedColumnName, 1) == 0) {
-                    unset($identifier[$i]);
+                    unset($identifiers[$i]);
                 } else {
                     $pks[] = $table->get('id');
                 }
