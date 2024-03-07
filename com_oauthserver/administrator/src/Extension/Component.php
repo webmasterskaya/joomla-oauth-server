@@ -32,5 +32,20 @@ class Component extends MVCComponent implements
      */
     public function boot(ContainerInterface $container): void
     {
+        self::requireDependency();
+    }
+
+    public static function requireDependency(): void
+    {
+        static $required;
+
+        if (!isset($required)) {
+            /** @var \Composer\Autoload\ClassLoader $loader */
+            $loader = require JPATH_LIBRARIES . '/lib_oauthserver/vendor/autoload.php';
+
+            $loader->unregister();
+
+            spl_autoload_register([new \Joomla\CMS\Autoload\ClassLoader($loader), 'loadClass'], true, true);
+        }
     }
 }

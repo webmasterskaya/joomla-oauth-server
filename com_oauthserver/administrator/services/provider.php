@@ -14,8 +14,6 @@ use Webmasterskaya\Component\OauthServer\Administrator\Extension\Component;
 
 \defined('_JEXEC') or die;
 
-require_once JPATH_LIBRARIES . '/lib_oauthserver/vendor/autoload.php';
-
 return new class implements ServiceProviderInterface {
 
     public function register(Container $container): void
