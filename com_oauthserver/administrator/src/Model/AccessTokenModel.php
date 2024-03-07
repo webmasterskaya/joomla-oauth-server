@@ -43,4 +43,21 @@ class AccessTokenModel extends AdminModel implements RevokedModelInterface
 
         return $data;
     }
+
+    /**
+     * @param \Webmasterskaya\Component\OauthServer\Administrator\Table\AccessTokenTable $table
+     * @return void
+     * @since version
+     */
+    protected function prepareTable($table)
+    {
+        if ($table->expiry instanceof \DateTime || $table->expiry instanceof \DateTimeImmutable) {
+            $table->expiry = $table->expiry->format($table->getDbo()->getDateFormat());
+        }
+    }
+
+    public function getTable($name = 'AccessToken', $prefix = 'Administrator', $options = [])
+    {
+        return parent::getTable($name, $prefix, $options);
+    }
 }
