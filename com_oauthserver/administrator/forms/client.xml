@@ -27,13 +27,27 @@
             <option value="1">JYES</option>
             <option value="0">JNO</option>
         </field>
-        <field name="redirect_uri"
-               type="url"
-               filter="url"
-               validate="url"
-               label="COM_OAUTHSERVER_CLIENT_REDIRECT_URI_LABEL"
-               description="COM_OAUTHSERVER_CLIENT_REDIRECT_URI_DESCRIPTION"/>
-
+        <field
+                name="redirect_uris"
+                type="subform"
+                label="COM_OAUTHSERVER_CLIENT_REDIRECT_URI_LABEL"
+                description="COM_OAUTHSERVER_CLIENT_REDIRECT_URI_DESCRIPTION"
+                multiple="true"
+                required="true"
+                hiddenLabel="true"
+                layout="joomla.form.field.subform.repeatable-table"
+        >
+            <form>
+                <field
+                        label="COM_OAUTHSERVER_CLIENT_REDIRECT_URI_LABEL"
+                        name="uri"
+                        type="url"
+                        filter="url"
+                        validate="url"
+                        class="w-100"
+                />
+            </form>
+        </field>
         <field name="allow_plain_text_pkce"
                type="radio"
                layout="joomla.form.field.radio.switcher"
