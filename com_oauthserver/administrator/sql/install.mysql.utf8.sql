@@ -12,7 +12,7 @@ create table if not exists `#__webmasterskaya_oauthserver_access_tokens`
         unique (identifier)
 );
 
-create table `#__webmasterskaya_oauthserver_authorization_codes`
+create table if not exists `#__webmasterskaya_oauthserver_authorization_codes`
 (
     id         int auto_increment
         primary key,
@@ -26,7 +26,7 @@ create table `#__webmasterskaya_oauthserver_authorization_codes`
         unique (identifier)
 );
 
-create table `#__webmasterskaya_oauthserver_clients`
+create table if not exists `#__webmasterskaya_oauthserver_clients`
 (
     id                    int auto_increment
         primary key,
@@ -43,7 +43,7 @@ create table `#__webmasterskaya_oauthserver_clients`
         unique (identifier)
 );
 
-create table `#__webmasterskaya_oauthserver_refresh_tokens`
+create table if not exists `#__webmasterskaya_oauthserver_refresh_tokens`
 (
     id              int auto_increment
         primary key,
