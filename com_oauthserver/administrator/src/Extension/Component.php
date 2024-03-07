@@ -46,6 +46,8 @@ class Component extends MVCComponent implements
             $loader->unregister();
 
             spl_autoload_register([new \Joomla\CMS\Autoload\ClassLoader($loader), 'loadClass'], true, true);
+
+            $required = true;
         }
     }
 }
