@@ -42,10 +42,17 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
 
     public function persistNewAccessToken(AccessTokenEntityInterface $accessTokenEntity): void
     {
-        /** @var AccessToken $accessTokenEntity */
-        $accessToken = $this->accessTokenModel->getItemByIdentifier($accessTokenEntity->getIdentifier());
+        $found = false;
+        try {
+            /** @var AccessToken $accessTokenEntity */
+            $accessToken = $this->accessTokenModel->getItemByIdentifier($accessTokenEntity->getIdentifier());
+            if ($accessToken->id > 0) {
+                $found = true;
+            }
+        } catch (\Throwable $e) {
+        }
 
-        if ($accessToken->id > 0) {
+        if ($found) {
             throw UniqueTokenIdentifierConstraintViolationException::create();
         }
 
