@@ -35,15 +35,23 @@ class RefreshTokenRepository implements RefreshTokenRepositoryInterface
 
     public function persistNewRefreshToken(RefreshTokenEntityInterface $refreshTokenEntity)
     {
-        $refreshToken = $this->refreshTokenModel->getItemByIdentifier($refreshTokenEntity->getIdentifier());
+        $found = false;
+        try {
+            $refreshToken = $this->refreshTokenModel->getItemByIdentifier($refreshTokenEntity->getIdentifier());
 
-        if ($refreshToken->id > 0) {
+            if ($refreshToken->id > 0) {
+                $found = true;
+            }
+        } catch (\Exception $e) {
+        }
+
+        if ($found) {
             throw UniqueTokenIdentifierConstraintViolationException::create();
         }
 
         $data = $refreshTokenEntity->getData();
 
-        $accessToken = $this->accessTokenModel->getItemByIdentifier($refreshTokenEntity->getAccessToken());
+        $accessToken = $this->accessTokenModel->getItemByIdentifier($refreshTokenEntity->getAccessToken()->getIdentifier());
 
         unset($data['access_token_identifier']);
         $data['access_token_id'] = $accessToken->id;
