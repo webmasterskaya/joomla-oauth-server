@@ -5,10 +5,8 @@ namespace Webmasterskaya\Component\OauthServer\Site\Controller;
 use Joomla\CMS\Application\CMSApplication;
 use Joomla\CMS\Component\ComponentHelper;
 use League\OAuth2\Server\CryptKey;
-use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\ClientCredentialsGrant;
 use League\OAuth2\Server\Grant\ImplicitGrant;
-use League\OAuth2\Server\Grant\PasswordGrant;
 use League\OAuth2\Server\Grant\RefreshTokenGrant;
 use Webmasterskaya\Component\OauthServer\Site\Entity\User as UserEntity;
 use Joomla\CMS\MVC\Controller\BaseController;
@@ -206,10 +204,11 @@ class LoginController extends BaseController
      */
     public function token(): void
     {
-        $app = $this->app;
         $server = $this->authorizationServer;
         $serverRequest = ServerRequestFactory::fromGlobals();
-        $serverResponse = $app->getResponse();
-        $app->setResponse($server->respondToAccessTokenRequest($serverRequest, $serverResponse));
+        $serverResponse = $this->app->getResponse();
+        $this->app->setResponse($server->respondToAccessTokenRequest($serverRequest, $serverResponse));
+        $this->app->getInput()->set('format', 'json');
+        //TODO: WTF!??!?! Какого хрена оно отдаёт простой HTML?
     }
 }
