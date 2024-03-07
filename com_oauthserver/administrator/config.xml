@@ -1,82 +1,22 @@
 <?xml version="1.0"?>
 <config>
     <fieldset name="general" label="COM_OAUTHSERVER_GENERAL">
-        <fieldset name="authorization_server" label="authorization_server">
-            <field name="private_key"
-                   type="string"
-                   label="COM_OAUTHSERVER_PARAMS_PRIVATE_KEY_LABEL"
-                   description="COM_OAUTHSERVER_PARAMS_PRIVATE_KEY_DESCRIPTION"
-                   required="1"
-                   default=""/>
-            <field name="private_key_passphrase"
-                   type="string"
-                   label="COM_OAUTHSERVER_PARAMS_PRIVATE_KEY_PASSPHRASE_LABEL"
-                   default=""/>
-            <field name="encryption_key"
-                   type="string"
-                   label="COM_OAUTHSERVER_PARAMS_ENCRYPTION_KEY_LABEL"
-                   description="COM_OAUTHSERVER_PARAMS_ENCRYPTION_KEY_DESCRIPTION"
-                   required="1"
-                   default=""/>
-            <field name="encryption_key_type"
-                   type="list"
-                   label="COM_OAUTHSERVER_PARAMS_ENCRYPTION_KEY_TYPE_LABEL"
-                   required="1"
-                   default="plain">
-                <option value="plain">Plain</option>
-                <option value="defuse">Defuse</option>
-            </field>
-            <field name="access_token_ttl"
-                   type="string"
-                   label="COM_OAUTHSERVER_PARAMS_ACCESS_TOKEN_TTL_LABEL"
-                   description="COM_OAUTHSERVER_PARAMS_ACCESS_TOKEN_TTL_DESCRIPTION"
-                   required="1"
-                   default="PT1H"/>
-            <field name="access_token_ttl"
-                   type="string"
-                   label="COM_OAUTHSERVER_PARAMS_ACCESS_TOKEN_TTL_LABEL"
-                   description="COM_OAUTHSERVER_PARAMS_ACCESS_TOKEN_TTL_DESCRIPTION"
-                   required="1"
-                   default="PT1H"/>
-            <field name="refresh_token_ttl"
-                   type="string"
-                   label="COM_OAUTHSERVER_PARAMS_REFRESH_TOKEN_TTL_LABEL"
-                   description="COM_OAUTHSERVER_PARAMS_REFRESH_TOKEN_TTL_DESCRIPTION"
-                   required="1"
-                   default="P1M"/>
-            <field name="auth_code_ttl"
-                   type="string"
-                   label="COM_OAUTHSERVER_PARAMS_AUTH_CODE_TTL_LABEL"
-                   description="COM_OAUTHSERVER_PARAMS_AUTH_CODE_TTL_DESCRIPTION"
-                   required="1"
-                   default="PT10M"/>
-            <field name="enable_client_credentials_grant"
-                   type="radio"
-                   label="COM_OAUTHSERVER_PARAMS_ENABLE_CLIENT_CREDENTIALS_GRANT_LABEL"
-                   layout="joomla.form.field.radio.switcher"
-                   filter="integer"
-                   default="0">
-                <option value="0">JNO</option>
-                <option value="1">JYES</option>
-            </field>
-            <field name="enable_password_grant"
-                   type="radio"
-                   label="COM_OAUTHSERVER_PARAMS_ENABLE_PASSWORD_GRANT_LABEL"
-                   layout="joomla.form.field.radio.switcher"
-                   filter="integer"
-                   default="0">
-                <option value="0">JNO</option>
-                <option value="1">JYES</option>
-            </field>
-            <field name="enable_refresh_token_grant"
-                   type="radio"
-                   label="COM_OAUTHSERVER_PARAMS_ENABLE_REFRESH_TOKEN_GRANT_LABEL"
-                   layout="joomla.form.field.radio.switcher"
-                   filter="integer"
-                   default="1">
-                <option value="0">JNO</option>
-                <option value="1">JYES</option>
-            </field>
+        <fieldset name="basic_config" label="COM_OAUTHSERVER_PARAMS_BASIC_CONFIG">
+            <!--            <field name="encryption_key"-->
+            <!--                   type="string"-->
+            <!--                   label="COM_OAUTHSERVER_PARAMS_ENCRYPTION_KEY_LABEL"-->
+            <!--                   description="COM_OAUTHSERVER_PARAMS_ENCRYPTION_KEY_DESCRIPTION"-->
+            <!--                   required="1"-->
+            <!--                   default=""/>-->
+            <!--            <field name="encryption_key_type"-->
+            <!--                   type="list"-->
+            <!--                   label="COM_OAUTHSERVER_PARAMS_ENCRYPTION_KEY_TYPE_LABEL"-->
+            <!--                   required="1"-->
+            <!--                   default="plain">-->
+            <!--                <option value="plain">Plain</option>-->
+            <!--                <option value="defuse">Defuse</option>-->
+            <!--            </field>-->
+
             <field name="enable_auth_code_grant"
                    type="radio"
                    label="COM_OAUTHSERVER_PARAMS_ENABLE_AUTH_CODE_GRANT_LABEL"
@@ -86,12 +26,103 @@
                 <option value="0">JNO</option>
                 <option value="1">JYES</option>
             </field>
+            <field name="enable_refresh_token_grant"
+                   type="radio"
+                   label="COM_OAUTHSERVER_PARAMS_ENABLE_REFRESH_TOKEN_GRANT_LABEL"
+                   layout="joomla.form.field.radio.switcher"
+                   filter="integer"
+                   default="0">
+                <option value="0">JNO</option>
+                <option value="1">JYES</option>
+            </field>
+            <field name="enable_client_credentials_grant"
+                   type="radio"
+                   label="COM_OAUTHSERVER_PARAMS_ENABLE_CLIENT_CREDENTIALS_GRANT_LABEL"
+                   layout="joomla.form.field.radio.switcher"
+                   filter="integer"
+                   default="0">
+                <option value="0">JNO</option>
+                <option value="1">JYES</option>
+            </field>
+            <field name="enable_implicit_grant"
+                   type="radio"
+                   label="COM_OAUTHSERVER_PARAMS_ENABLE_IMPLICIT_GRANT_LABEL"
+                   layout="joomla.form.field.radio.switcher"
+                   filter="integer"
+                   default="0">
+                <option value="0">JNO</option>
+                <option value="1">JYES</option>
+            </field>
             <field name="require_code_challenge_for_public_clients"
                    type="radio"
                    label="COM_OAUTHSERVER_PARAMS_REQUIRE_CODE_CHALLENGE_FOR_PUBLIC_CLIENTS_LABEL"
                    layout="joomla.form.field.radio.switcher"
                    filter="integer"
                    default="1">
+                <option value="0">JNO</option>
+                <option value="1">JYES</option>
+            </field>
+        </fieldset>
+        <fieldset name="life_time_config" label="COM_OAUTHSERVER_PARAMS_LIFE_TIME_CONFIG">
+            <field name="access_token_ttl"
+                   type="string"
+                   label="COM_OAUTHSERVER_PARAMS_ACCESS_TOKEN_TTL_LABEL"
+                   description="COM_OAUTHSERVER_PARAMS_ACCESS_TOKEN_TTL_DESCRIPTION"
+                   required="1"
+                   default="PT1H"/>
+            <field name="auth_code_ttl"
+                   type="string"
+                   label="COM_OAUTHSERVER_PARAMS_AUTH_CODE_TTL_LABEL"
+                   description="COM_OAUTHSERVER_PARAMS_AUTH_CODE_TTL_DESCRIPTION"
+                   required="1"
+                   default="PT10M"/>
+            <field name="refresh_token_ttl"
+                   type="string"
+                   label="COM_OAUTHSERVER_PARAMS_REFRESH_TOKEN_TTL_LABEL"
+                   description="COM_OAUTHSERVER_PARAMS_REFRESH_TOKEN_TTL_DESCRIPTION"
+                   required="1"
+                   default="P1M"/>
+        </fieldset>
+        <fieldset name="encryption_key_config" label="COM_OAUTHSERVER_PARAMS_ENCRYPTION_KEY_CONFIG">
+            <field name="key_method_paste"
+                   type="list"
+                   label="COM_OAUTHSERVER_PARAMS_KEY_METHOD_PASTE_LABEL"
+                   filter="integer"
+                   default="1">
+                <option value="0">COM_OAUTHSERVER_PARAMS_KEY_METHOD_PASTE_FILE</option>
+                <option value="1">COM_OAUTHSERVER_PARAMS_KEY_METHOD_PASTE_RAW</option>
+            </field>
+            <field name="private_key_passphrase"
+                   type="string"
+                   label="COM_OAUTHSERVER_PARAMS_PRIVATE_KEY_PASSPHRASE_LABEL"
+                   default=""/>
+            <field name="private_key_path"
+                   type="text"
+                   label="COM_OAUTHSERVER_PARAMS_PRIVATE_KEY_LABEL"
+                   description="COM_OAUTHSERVER_PARAMS_PRIVATE_KEY_DESCRIPTION"
+                   showon="key_method_paste:0"
+                   default=""/>
+            <field name="private_key_raw"
+                   type="editor"
+                   readonly="true"
+                   editor="codemirror"
+                   label="COM_OAUTHSERVER_PARAMS_PRIVATE_KEY_RAW_LABEL"
+                   showon="key_method_paste:1"
+                   default=""/>
+            <field name="public_key_raw"
+                   type="editor"
+                   readonly="true"
+                   editor="codemirror"
+                   label="COM_OAUTHSERVER_PARAMS_PUBLIC_KEY_RAW_LABEL"
+                   showon="key_method_paste:1"
+                   default=""/>
+            <field name="regenerate_raw_keys"
+                   type="radio"
+                   label="COM_OAUTHSERVER_PARAMS_REGENERATE_RAW_KEYS_LABEL"
+                   layout="joomla.form.field.radio.switcher"
+                   filter="integer"
+                   showon="key_method_paste:1"
+                   default="0">
                 <option value="0">JNO</option>
                 <option value="1">JYES</option>
             </field>
