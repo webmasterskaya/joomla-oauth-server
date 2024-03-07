@@ -3,13 +3,19 @@
 namespace Webmasterskaya\Component\OauthServer\Site\Controller;
 
 use Joomla\CMS\Application\CMSApplication;
+use Joomla\CMS\Component\ComponentHelper;
+use League\OAuth2\Server\CryptKey;
+use League\OAuth2\Server\Exception\OAuthServerException;
+use League\OAuth2\Server\Grant\ClientCredentialsGrant;
+use League\OAuth2\Server\Grant\ImplicitGrant;
+use League\OAuth2\Server\Grant\PasswordGrant;
+use League\OAuth2\Server\Grant\RefreshTokenGrant;
 use Webmasterskaya\Component\OauthServer\Site\Entity\User as UserEntity;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\CMS\Router\Route;
 use Joomla\Input\Input;
 use Joomla\CMS\Uri\Uri;
-use Laminas\Diactoros\ResponseFactory;
 use Laminas\Diactoros\ServerRequestFactory;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Grant\AuthCodeGrant;
@@ -21,9 +27,127 @@ use Webmasterskaya\Component\OauthServer\Site\Repository\ScopeRepository;
 
 class LoginController extends BaseController
 {
+    private AuthorizationServer $authorizationServer;
+
     public function __construct($config = [], MVCFactoryInterface $factory = null, ?CMSApplication $app = null, ?Input $input = null)
     {
         parent::__construct($config, $factory, $app, $input);
+
+        $this->setupAuthorizationServer();
+    }
+
+    /**
+     * @return void
+     * @throws \Exception
+     * @since version
+     */
+    private function setupAuthorizationServer()
+    {
+        if (isset($authorizationServer)) {
+            return;
+        }
+
+        // Init our repositories
+        /**
+         * @var \Webmasterskaya\Component\OauthServer\Administrator\Model\ClientModel $clientModel
+         * @var \Webmasterskaya\Component\OauthServer\Administrator\Model\AccessTokenModel $accessTokenModel
+         * @var \Webmasterskaya\Component\OauthServer\Administrator\Model\AuthCodeModel $authCodeModel
+         * @var \Webmasterskaya\Component\OauthServer\Administrator\Model\RefreshTokenModel $refreshTokenModel
+         */
+        $clientModel = $this->factory->createModel('Client', 'Administrator', ['request_ignore' => true]);
+        $clientRepository = new ClientRepository($clientModel);
+
+        $accessTokenModel = $this->factory->createModel('AccessToken', 'Administrator', ['request_ignore' => true]);
+        $accessTokenRepository = new AccessTokenRepository($accessTokenModel, $clientModel);
+
+        $scopeRepository = new ScopeRepository($clientModel);
+        $scopeRepository->setDispatcher($this->getDispatcher());
+
+        $authCodeModel = $this->factory->createModel('AuthCode', 'Administrator', ['request_ignore' => true]);
+        $authCodeRepository = new AuthCodeRepository($authCodeModel, $clientModel);
+
+        $refreshTokenModel = $this->factory->createModel('RefreshToken', 'Administrator', ['request_ignore' => true]);
+        $refreshTokenRepository = new RefreshTokenRepository($refreshTokenModel, $accessTokenModel);
+
+        $params = ComponentHelper::getParams('com_oauthserver');
+
+        //TODO: Этот код нужно вынести в отдельный хелпер, для генерации закрытого и открытого ключей
+        if (false) {
+            /** @noinspection PhpUnreachableStatementInspection */
+            $key = openssl_pkey_new([
+                "digest_alg" => "sha512",
+                "private_key_bits" => 4096,
+                "private_key_type" => OPENSSL_KEYTYPE_RSA,
+            ]);
+            openssl_pkey_export($key, $private_key);
+            // Extract the public key from $res to $pubKey
+            $pub = openssl_pkey_get_details($key);
+            $pub = $pub["key"];
+        }
+
+        if ($params->get('key_method_paste')) {
+            $private_key = $params->get('private_key_raw');
+        } else {
+            $private_key = $params->get('private_key_path');
+        }
+
+        if (!!($private_key_passphrase = $params->get('private_key_passphrase'))) {
+            $private_key = new CryptKey($private_key, $private_key_passphrase);
+        }
+
+        $encryption_key = $this->app->get('secret');
+
+        $server = new AuthorizationServer(
+            $clientRepository,
+            $accessTokenRepository,
+            $scopeRepository,
+            $private_key,
+            $encryption_key
+        );
+
+        $access_token_ttl = $params->get('access_token_ttl', 'PT1H');
+
+        if (!!$params->get('enable_auth_code_grant', true)) {
+            $grant = new AuthCodeGrant(
+                $authCodeRepository,
+                $refreshTokenRepository,
+                new \DateInterval($params->get('auth_code_ttl', 'PT10M')) // authorization codes will expire after 10 minutes
+            );
+
+            $grant->setRefreshTokenTTL(new \DateInterval($params->get('refresh_token_ttl', 'P1M')));
+
+            $server->enableGrantType(
+                $grant,
+                new \DateInterval($access_token_ttl)
+            );
+        }
+
+        if (!!$params->get('enable_refresh_token_grant', false)) {
+            $grant = new RefreshTokenGrant($refreshTokenRepository);
+
+            $grant->setRefreshTokenTTL(new \DateInterval($params->get('refresh_token_ttl', 'P1M')));
+
+            $server->enableGrantType(
+                $grant,
+                new \DateInterval($access_token_ttl)
+            );
+        }
+
+        if (!!$params->get('enable_client_credentials_grant', false)) {
+            $server->enableGrantType(
+                new ClientCredentialsGrant(),
+                new \DateInterval($access_token_ttl)
+            );
+        }
+
+        if (!!$params->get('enable_implicit_grant', false)) {
+            $server->enableGrantType(
+                new ImplicitGrant(new \DateInterval($access_token_ttl)),
+                new \DateInterval($access_token_ttl)
+            );
+        }
+
+        $this->authorizationServer = $server;
     }
 
     /**
@@ -52,78 +176,40 @@ class LoginController extends BaseController
         }
         $this->app->setUserState('oauthserver.login.authorize.request', []);
 
-        /** @var \Webmasterskaya\Component\OauthServer\Administrator\Model\ClientModel $clientModel */
-        $clientModel = $this->factory->createModel('Client', 'Administrator', ['request_ignore' => true]);
-        $clientRepository = new ClientRepository($clientModel);
-
-        /** @var \Webmasterskaya\Component\OauthServer\Administrator\Model\AccessTokenModel $accessTokenModel */
-        $accessTokenModel = $this->factory->createModel('AccessToken', 'Administrator', ['request_ignore' => true]);
-        $accessTokenRepository = new AccessTokenRepository($accessTokenModel, $clientModel);
-
-        $scopeRepository = new ScopeRepository($clientModel);
-        $scopeRepository->setDispatcher($this->getDispatcher());
-
-        /** @var \Webmasterskaya\Component\OauthServer\Administrator\Model\AuthCodeModel $authCodeModel */
-        $authCodeModel = $this->factory->createModel('AuthCode', 'Administrator', ['request_ignore' => true]);
-        $authCodeRepository = new AuthCodeRepository($authCodeModel, $clientModel);
-
-        /** @var \Webmasterskaya\Component\OauthServer\Administrator\Model\RefreshTokenModel $refreshTokenModel */
-        $refreshTokenModel = $this->factory->createModel('RefreshToken', 'Administrator', ['request_ignore' => true]);
-        $refreshTokenRepository = new RefreshTokenRepository($refreshTokenModel, $accessTokenModel);
-
-        $key = openssl_pkey_new([
-            "digest_alg" => "sha512",
-            "private_key_bits" => 4096,
-            "private_key_type" => OPENSSL_KEYTYPE_RSA,
-        ]);
-
-        $ppk = '';
-        openssl_pkey_export($key, $ppk);
-
-        // Extract the public key from $res to $pubKey
-//        $pub = openssl_pkey_get_details($key);
-//        $pub = $pub["key"];
-
-//        var_dump($this->app->getUserState('oauthserver.login.authorize.request'));
-
-        $server = new AuthorizationServer(
-            $clientRepository,
-            $accessTokenRepository,
-            $scopeRepository,
-            $ppk,
-            $this->app->get('secret')
-        );
-
-        $grant = new AuthCodeGrant(
-            $authCodeRepository,
-            $refreshTokenRepository,
-            new \DateInterval('PT10M') // authorization codes will expire after 10 minutes
-        );
-
-        $grant->setRefreshTokenTTL(new \DateInterval('P1M')); // refresh tokens will expire after 1 month
-
-        $server->enableGrantType(
-            $grant,
-            new \DateInterval('PT1H') // access tokens will expire after 1 hour
-        );
-
+        $server = $this->authorizationServer;
         $serverRequest = ServerRequestFactory::fromGlobals();
-        $serverResponse = $this->app->getResponse();
+        $serverResponse = $app->getResponse();
 
-//        var_dump($serverRequest->getQueryParams()); die();
-
+        // Validate the HTTP request and return an AuthorizationRequest object.
         $authRequest = $server->validateAuthorizationRequest($serverRequest);
-        $authRequest->setUser(new UserEntity($user));
+
+        // The auth request object can be serialized and saved into a user's session.
+        // You will probably want to redirect the user at this point to a login endpoint.
+
+        // Once the user has logged in set the user on the AuthorizationRequest
+        $authRequest->setUser(new UserEntity($user)); // an instance of UserEntityInterface
+
+        // At this point you should redirect the user to an authorization page.
+        // This form will ask the user to approve the client and the scopes requested.
+
+        // Once the user has approved or denied the client update the status
+        // (true = approved, false = denied)
         $authRequest->setAuthorizationApproved(true);
 
-        $this->app->setResponse($server->completeAuthorizationRequest($authRequest, $serverResponse));
+        $app->setResponse($server->completeAuthorizationRequest($authRequest, $serverResponse));
+    }
 
-        return;
-
-        echo "<pre>";
-
-        var_dump();
-
-        die();
+    /**
+     * @return void
+     * @throws \Exception
+     * @since version
+     */
+    public function token(): void
+    {
+        $app = $this->app;
+        $server = $this->authorizationServer;
+        $serverRequest = ServerRequestFactory::fromGlobals();
+        $serverResponse = $app->getResponse();
+        $app->setResponse($server->respondToAccessTokenRequest($serverRequest, $serverResponse));
     }
 }
