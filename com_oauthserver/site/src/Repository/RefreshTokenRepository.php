@@ -3,28 +3,67 @@
 namespace Webmasterskaya\Component\OauthServer\Site\Repository;
 
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
+use League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationException;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
+use Webmasterskaya\Component\OauthServer\Administrator\Model\AccessTokenModel;
+use Webmasterskaya\Component\OauthServer\Administrator\Model\RefreshTokenModel;
+use Webmasterskaya\Component\OauthServer\Site\Entity\RefreshToken;
 
 class RefreshTokenRepository implements RefreshTokenRepositoryInterface
 {
 
-    public function getNewRefreshToken()
+    private RefreshTokenModel $refreshTokenModel;
+
+    private AccessTokenModel $accessTokenModel;
+
+    /**
+     * @param \Webmasterskaya\Component\OauthServer\Administrator\Model\RefreshTokenModel $refreshTokenModel
+     * @param \Webmasterskaya\Component\OauthServer\Administrator\Model\AccessTokenModel $accessTokenModel
+     * @since version
+     */
+    public function __construct(RefreshTokenModel $refreshTokenModel, AccessTokenModel $accessTokenModel)
     {
-        // TODO: Implement getNewRefreshToken() method.
+        $this->refreshTokenModel = $refreshTokenModel;
+        $this->accessTokenModel = $accessTokenModel;
+    }
+
+
+    public function getNewRefreshToken(): RefreshToken
+    {
+        return new RefreshToken();
     }
 
     public function persistNewRefreshToken(RefreshTokenEntityInterface $refreshTokenEntity)
     {
-        // TODO: Implement persistNewRefreshToken() method.
+        $refreshToken = $this->refreshTokenModel->getItemByIdentifier($refreshTokenEntity->getIdentifier());
+
+        if ($refreshToken->id > 0) {
+            throw UniqueTokenIdentifierConstraintViolationException::create();
+        }
+
+        $data = $refreshTokenEntity->getData();
+
+        $accessToken = $this->accessTokenModel->getItemByIdentifier($refreshTokenEntity->getAccessToken());
+
+        unset($data['access_token_identifier']);
+        $data['access_token_id'] = $accessToken->id;
+
+        $this->refreshTokenModel->save($data);
     }
 
-    public function revokeRefreshToken($tokenId)
+    public function revokeRefreshToken($tokenId): void
     {
-        // TODO: Implement revokeRefreshToken() method.
+        $this->refreshTokenModel->revoke($tokenId);
     }
 
-    public function isRefreshTokenRevoked($tokenId)
+    public function isRefreshTokenRevoked($tokenId): bool
     {
-        // TODO: Implement isRefreshTokenRevoked() method.
+        $refreshToken = $this->refreshTokenModel->getItemByIdentifier($tokenId);
+
+        if (empty($refreshToken->id)) {
+            return true;
+        }
+
+        return !!$refreshToken->revoked;
     }
 }

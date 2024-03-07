@@ -4,7 +4,6 @@ namespace Webmasterskaya\Component\OauthServer\Administrator\Model;
 
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Object\CMSObject;
-use Joomla\Registry\Registry;
 use Joomla\Utilities\ArrayHelper;
 
 trait GetItemByIdentifierTrait
@@ -37,7 +36,7 @@ trait GetItemByIdentifierTrait
         $all_properties = $table->getProperties(false);
 
         if (!empty($all_properties['_jsonEncode'])) {
-            foreach ($all_properties['$_jsonEncode'] as $prop) {
+            foreach ($all_properties['_jsonEncode'] as $prop) {
                 if (array_key_exists($prop, $properties) && is_string($properties[$prop])) {
                     $properties[$prop] = json_decode($properties[$prop]);
                 }

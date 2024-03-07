@@ -2,19 +2,107 @@
 
 namespace Webmasterskaya\Component\OauthServer\Site\Repository;
 
+use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\Event\DispatcherAwareInterface;
+use Joomla\Event\DispatcherAwareTrait;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
+use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
+use Webmasterskaya\Component\OauthServer\Administrator\Event\Scope\ScopeResolveEvent;
+use Webmasterskaya\Component\OauthServer\Administrator\Model\ClientModel;
+use Webmasterskaya\Component\OauthServer\Site\Entity\Scope;
 
-class ScopeRepository implements ScopeRepositoryInterface
+class ScopeRepository implements ScopeRepositoryInterface, DispatcherAwareInterface
 {
+    use DispatcherAwareTrait;
 
-    public function getScopeEntityByIdentifier($identifier)
+    private ClientModel $clientModel;
+
+    public function __construct(ClientModel $clientModel)
     {
-        // TODO: Implement getScopeEntityByIdentifier() method.
+        $this->clientModel = $clientModel;
     }
 
+    public function getScopeEntityByIdentifier($identifier): ?Scope
+    {
+        $defined = ['userinfo', 'email'];
+
+        if (!in_array($identifier, $defined)) {
+            return null;
+        }
+
+        $scope = new Scope();
+        $scope->setIdentifier($identifier);
+
+        return $scope;
+    }
+
+    /**
+     * @param Scope[] $scopes
+     * @param $grantType
+     * @param \League\OAuth2\Server\Entities\ClientEntityInterface $clientEntity
+     * @param null $userIdentifier
+     * @return mixed
+     * @throws \League\OAuth2\Server\Exception\OAuthServerException
+     * @since version
+     */
     public function finalizeScopes(array $scopes, $grantType, ClientEntityInterface $clientEntity, $userIdentifier = null)
     {
-        // TODO: Implement finalizeScopes() method.
+        $client = $this->clientModel->getItemByIdentifier($clientEntity->getIdentifier());
+
+        $scopes = $this->setupScopes($client, array_values($scopes));
+
+        PluginHelper::importPlugin('oauthserver');
+
+        $event = new ScopeResolveEvent(
+            $scopes,
+            $grantType,
+            $client,
+            $userIdentifier
+        );
+
+        return $this->getDispatcher()
+            ->dispatch($event->getName(), $event)
+            ->getArgument('scopes', []);
+    }
+
+    /**
+     * @param object $client
+     * @param array $requestedScopes
+     * @return array
+     * @throws \League\OAuth2\Server\Exception\OAuthServerException
+     * @since version
+     */
+    private function setupScopes(object $client, array $requestedScopes): array
+    {
+        $clientScopes = $client->scopes;
+
+        if (empty($clientScopes)) {
+            return $requestedScopes;
+        }
+
+        $clientScopes = array_map(function ($item) {
+            $scope = new Scope();
+            $scope->setIdentifier((string)$item);
+            return $scope;
+        }, $clientScopes);
+
+        if (empty($requestedScopes)) {
+            return $clientScopes;
+        }
+
+        $finalizedScopes = [];
+        $clientScopesAsStrings = array_map('strval', $clientScopes);
+
+        foreach ($requestedScopes as $requestedScope) {
+            $requestedScopeAsString = (string)$requestedScope;
+            if (!\in_array($requestedScopeAsString, $clientScopesAsStrings, true)) {
+                throw OAuthServerException::invalidScope($requestedScopeAsString);
+            }
+
+            $finalizedScopes[] = $requestedScope;
+        }
+
+        return $finalizedScopes;
     }
 }

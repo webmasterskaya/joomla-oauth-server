@@ -45,11 +45,8 @@ trait RevokedTableTrait
 
     abstract public function appendPrimaryKeys($query, $pk = null);
 
-    public function revoke($pks = null, $userId = 0): bool
+    public function revoke($pks = null): bool
     {
-        // Sanitize input
-        $userId = (int)$userId;
-
         // Pre-processing by observers
         $event = AbstractEvent::create(
             'onTableBeforeRevoke',
