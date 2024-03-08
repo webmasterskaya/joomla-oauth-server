@@ -1,6 +1,6 @@
 {
-  "name": "webmaserskaya/lib_oauthserver",
-  "type": "library",
+  "type": "joomla-package",
+  "description": "OAuth Server for Joomla 4.3+ using the PHP League's OAuth2 Server",
   "license": "MIT",
   "homepage": "https://github.com/webmasterskaya/joomla-oauth-server",
   "authors": [
