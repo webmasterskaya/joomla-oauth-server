@@ -10,6 +10,7 @@ use Joomla\CMS\Extension\BootableExtensionInterface;
 use Joomla\CMS\Extension\MVCComponent;
 use Joomla\CMS\HTML\HTMLRegistryAwareTrait;
 use Psr\Container\ContainerInterface;
+use Webmasterskaya\Component\OauthServer\Administrator\Helper\ComponentHelper;
 
 \defined('JPATH_PLATFORM') or die;
 
@@ -32,22 +33,6 @@ class Component extends MVCComponent implements
      */
     public function boot(ContainerInterface $container): void
     {
-        self::requireDependency();
-    }
-
-    public static function requireDependency(): void
-    {
-        static $required;
-
-        if (!isset($required)) {
-            /** @var \Composer\Autoload\ClassLoader $loader */
-            $loader = require JPATH_LIBRARIES . '/lib_oauthserver/vendor/autoload.php';
-
-            $loader->unregister();
-
-            spl_autoload_register([new \Joomla\CMS\Autoload\ClassLoader($loader), 'loadClass'], true, true);
-
-            $required = true;
-        }
+        ComponentHelper::registerComponentDependencies();
     }
 }
