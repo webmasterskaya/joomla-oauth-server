@@ -1,4 +1,11 @@
 <?php
+/**
+ * @package         Joomla.Site
+ * @subpackage      com_oauthserver
+ *
+ * @copyright   (c) 2024. Webmasterskaya. <https://webmasterskaya.xyz>
+ * @license         MIT; see LICENSE.txt
+ **/
 
 namespace Webmasterskaya\Component\OauthServer\Site\Repository;
 
@@ -10,21 +17,23 @@ use Webmasterskaya\Component\OauthServer\Administrator\Model\AccessTokenModel;
 use Webmasterskaya\Component\OauthServer\Administrator\Model\ClientModel;
 use Webmasterskaya\Component\OauthServer\Site\Entity\AccessToken;
 
+\defined('_JEXEC') or die;
+
 class AccessTokenRepository implements AccessTokenRepositoryInterface
 {
     private AccessTokenModel $accessTokenModel;
     private ClientModel $clientModel;
 
     /**
-     * @param \Webmasterskaya\Component\OauthServer\Administrator\Model\AccessTokenModel $accessTokenModel
-     * @param \Webmasterskaya\Component\OauthServer\Administrator\Model\ClientModel $clientModel
+     * @param   \Webmasterskaya\Component\OauthServer\Administrator\Model\AccessTokenModel  $accessTokenModel
+     * @param   \Webmasterskaya\Component\OauthServer\Administrator\Model\ClientModel       $clientModel
      *
      * @since version
      */
     public function __construct(AccessTokenModel $accessTokenModel, ClientModel $clientModel)
     {
         $this->accessTokenModel = $accessTokenModel;
-        $this->clientModel = $clientModel;
+        $this->clientModel      = $clientModel;
     }
 
     public function getNewToken(ClientEntityInterface $clientEntity, array $scopes, $userIdentifier = null): AccessTokenEntityInterface
@@ -33,7 +42,8 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
         $accessToken->setClient($clientEntity);
         $accessToken->setUserIdentifier($userIdentifier);
 
-        foreach ($scopes as $scope) {
+        foreach ($scopes as $scope)
+        {
             $accessToken->addScope($scope);
         }
 
@@ -43,16 +53,21 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
     public function persistNewAccessToken(AccessTokenEntityInterface $accessTokenEntity): void
     {
         $found = false;
-        try {
+        try
+        {
             /** @var AccessToken $accessTokenEntity */
             $accessToken = $this->accessTokenModel->getItemByIdentifier($accessTokenEntity->getIdentifier());
-            if ($accessToken->id > 0) {
+            if ($accessToken->id > 0)
+            {
                 $found = true;
             }
-        } catch (\Throwable $e) {
+        }
+        catch (\Throwable $e)
+        {
         }
 
-        if ($found) {
+        if ($found)
+        {
             throw UniqueTokenIdentifierConstraintViolationException::create();
         }
 
@@ -76,7 +91,8 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
     {
         $accessToken = $this->accessTokenModel->getItemByIdentifier($tokenId);
 
-        if (!$accessToken->id) {
+        if (!$accessToken->id)
+        {
             return true;
         }
 

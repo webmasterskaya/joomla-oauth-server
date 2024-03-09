@@ -1,4 +1,11 @@
 <?php
+/**
+ * @package         Joomla.Site
+ * @subpackage      com_oauthserver
+ *
+ * @copyright   (c) 2024. Webmasterskaya. <https://webmasterskaya.xyz>
+ * @license         MIT; see LICENSE.txt
+ **/
 
 namespace Webmasterskaya\Component\OauthServer\Site\Repository;
 
@@ -8,6 +15,8 @@ use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use Webmasterskaya\Component\OauthServer\Administrator\Model\ClientModel;
 use Webmasterskaya\Component\OauthServer\Site\Entity\Client;
+
+\defined('_JEXEC') or die;
 
 class ClientRepository implements ClientRepositoryInterface
 {
@@ -20,6 +29,7 @@ class ClientRepository implements ClientRepositoryInterface
 
     /**
      * @param $clientIdentifier
+     *
      * @return \League\OAuth2\Server\Entities\ClientEntityInterface|null
      * @throws \Exception
      * @since version
@@ -28,7 +38,8 @@ class ClientRepository implements ClientRepositoryInterface
     {
         $item = $this->clientModel->getItemByIdentifier($clientIdentifier);
 
-        if (empty($item->id)) {
+        if (empty($item->id))
+        {
             return null;
         }
 
@@ -39,19 +50,23 @@ class ClientRepository implements ClientRepositoryInterface
     {
         $item = $this->clientModel->getItemByIdentifier($clientIdentifier);
 
-        if (empty($item->id)) {
+        if (empty($item->id))
+        {
             return false;
         }
 
-        if (!$item->active) {
+        if (!$item->active)
+        {
             return false;
         }
 
-        if (!$this->isGrantSupported($item, $grantType)) {
+        if (!$this->isGrantSupported($item, $grantType))
+        {
             return false;
         }
 
-        if (!!$item->public || hash_equals((string)$item->secret, (string)$clientSecret)) {
+        if (!!$item->public || hash_equals((string) $item->secret, (string) $clientSecret))
+        {
             return true;
         }
 
@@ -63,22 +78,24 @@ class ClientRepository implements ClientRepositoryInterface
         $clientEntity = new Client();
         $clientEntity->setName($client->name);
         $clientEntity->setIdentifier($client->identifier);
-        $clientEntity->setRedirectUri(ArrayHelper::getColumn((array)$client->redirect_uris, 'uri'));
+        $clientEntity->setRedirectUri(ArrayHelper::getColumn((array) $client->redirect_uris, 'uri'));
         $clientEntity->setConfidential(!$client->public);
-        $clientEntity->setAllowPlainTextPkce((bool)$client->allow_plain_text_pkce);
+        $clientEntity->setAllowPlainTextPkce((bool) $client->allow_plain_text_pkce);
 
         return $clientEntity;
     }
 
     private function isGrantSupported(\stdClass|CMSObject $client, ?string $grant): bool
     {
-        if (null === $grant) {
+        if (null === $grant)
+        {
             return true;
         }
 
-        $grants = array_map('strval', (array)$client->grants);
+        $grants = array_map('strval', (array) $client->grants);
 
-        if (empty($grants)) {
+        if (empty($grants))
+        {
             return true;
         }
 

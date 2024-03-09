@@ -1,4 +1,11 @@
 <?php
+/**
+ * @package         Joomla.Site
+ * @subpackage      com_oauthserver
+ *
+ * @copyright   (c) 2024. Webmasterskaya. <https://webmasterskaya.xyz>
+ * @license         MIT; see LICENSE.txt
+ **/
 
 namespace Webmasterskaya\Component\OauthServer\Site\Repository;
 
@@ -9,6 +16,8 @@ use Webmasterskaya\Component\OauthServer\Administrator\Model\AccessTokenModel;
 use Webmasterskaya\Component\OauthServer\Administrator\Model\RefreshTokenModel;
 use Webmasterskaya\Component\OauthServer\Site\Entity\RefreshToken;
 
+\defined('_JEXEC') or die;
+
 class RefreshTokenRepository implements RefreshTokenRepositoryInterface
 {
 
@@ -17,14 +26,15 @@ class RefreshTokenRepository implements RefreshTokenRepositoryInterface
     private AccessTokenModel $accessTokenModel;
 
     /**
-     * @param \Webmasterskaya\Component\OauthServer\Administrator\Model\RefreshTokenModel $refreshTokenModel
-     * @param \Webmasterskaya\Component\OauthServer\Administrator\Model\AccessTokenModel $accessTokenModel
+     * @param   \Webmasterskaya\Component\OauthServer\Administrator\Model\RefreshTokenModel  $refreshTokenModel
+     * @param   \Webmasterskaya\Component\OauthServer\Administrator\Model\AccessTokenModel   $accessTokenModel
+     *
      * @since version
      */
     public function __construct(RefreshTokenModel $refreshTokenModel, AccessTokenModel $accessTokenModel)
     {
         $this->refreshTokenModel = $refreshTokenModel;
-        $this->accessTokenModel = $accessTokenModel;
+        $this->accessTokenModel  = $accessTokenModel;
     }
 
 
@@ -36,16 +46,21 @@ class RefreshTokenRepository implements RefreshTokenRepositoryInterface
     public function persistNewRefreshToken(RefreshTokenEntityInterface $refreshTokenEntity)
     {
         $found = false;
-        try {
+        try
+        {
             $refreshToken = $this->refreshTokenModel->getItemByIdentifier($refreshTokenEntity->getIdentifier());
 
-            if ($refreshToken->id > 0) {
+            if ($refreshToken->id > 0)
+            {
                 $found = true;
             }
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e)
+        {
         }
 
-        if ($found) {
+        if ($found)
+        {
             throw UniqueTokenIdentifierConstraintViolationException::create();
         }
 
@@ -68,7 +83,8 @@ class RefreshTokenRepository implements RefreshTokenRepositoryInterface
     {
         $refreshToken = $this->refreshTokenModel->getItemByIdentifier($tokenId);
 
-        if (empty($refreshToken->id)) {
+        if (empty($refreshToken->id))
+        {
             return true;
         }
 

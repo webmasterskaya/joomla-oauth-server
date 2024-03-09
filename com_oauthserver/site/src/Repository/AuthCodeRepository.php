@@ -1,14 +1,22 @@
 <?php
+/**
+ * @package         Joomla.Site
+ * @subpackage      com_oauthserver
+ *
+ * @copyright   (c) 2024. Webmasterskaya. <https://webmasterskaya.xyz>
+ * @license         MIT; see LICENSE.txt
+ **/
 
 namespace Webmasterskaya\Component\OauthServer\Site\Repository;
 
 use League\OAuth2\Server\Entities\AuthCodeEntityInterface;
 use League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationException;
 use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
-use Wamania\Snowball\NotFoundException;
 use Webmasterskaya\Component\OauthServer\Administrator\Model\AuthCodeModel;
 use Webmasterskaya\Component\OauthServer\Administrator\Model\ClientModel;
 use Webmasterskaya\Component\OauthServer\Site\Entity\AuthCode;
+
+\defined('_JEXEC') or die;
 
 class AuthCodeRepository implements AuthCodeRepositoryInterface
 {
@@ -17,14 +25,15 @@ class AuthCodeRepository implements AuthCodeRepositoryInterface
     private ClientModel $clientModel;
 
     /**
-     * @param \Webmasterskaya\Component\OauthServer\Administrator\Model\AuthCodeModel $authCodeModel
-     * @param \Webmasterskaya\Component\OauthServer\Administrator\Model\ClientModel $clientModel
+     * @param   \Webmasterskaya\Component\OauthServer\Administrator\Model\AuthCodeModel  $authCodeModel
+     * @param   \Webmasterskaya\Component\OauthServer\Administrator\Model\ClientModel    $clientModel
+     *
      * @since version
      */
     public function __construct(AuthCodeModel $authCodeModel, ClientModel $clientModel)
     {
         $this->authCodeModel = $authCodeModel;
-        $this->clientModel = $clientModel;
+        $this->clientModel   = $clientModel;
     }
 
     public function getNewAuthCode(): AuthCode
@@ -35,17 +44,22 @@ class AuthCodeRepository implements AuthCodeRepositoryInterface
     public function persistNewAuthCode(AuthCodeEntityInterface $authCodeEntity)
     {
         $found = false;
-        try {
+        try
+        {
             $authCode = $this->authCodeModel->getItemByIdentifier($authCodeEntity->getIdentifier());
 
-            if ($authCode->id > 0) {
+            if ($authCode->id > 0)
+            {
                 $found = true;
 
             }
-        } catch (\Throwable $e) {
+        }
+        catch (\Throwable $e)
+        {
         }
 
-        if ($found) {
+        if ($found)
+        {
             throw UniqueTokenIdentifierConstraintViolationException::create();
         }
 
@@ -68,7 +82,8 @@ class AuthCodeRepository implements AuthCodeRepositoryInterface
     {
         $authCode = $this->authCodeModel->getItemByIdentifier($codeId);
 
-        if (empty($authCode->id)) {
+        if (empty($authCode->id))
+        {
             return true;
         }
 

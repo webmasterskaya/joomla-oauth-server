@@ -1,4 +1,11 @@
 <?php
+/**
+ * @package         Joomla.Site
+ * @subpackage      com_oauthserver
+ *
+ * @copyright   (c) 2024. Webmasterskaya. <https://webmasterskaya.xyz>
+ * @license         MIT; see LICENSE.txt
+ **/
 
 namespace Webmasterskaya\Component\OauthServer\Site\Repository;
 
@@ -11,6 +18,8 @@ use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use Webmasterskaya\Component\OauthServer\Administrator\Event\Scope\ScopeResolveEvent;
 use Webmasterskaya\Component\OauthServer\Administrator\Model\ClientModel;
 use Webmasterskaya\Component\OauthServer\Site\Entity\Scope;
+
+\defined('_JEXEC') or die;
 
 class ScopeRepository implements ScopeRepositoryInterface, DispatcherAwareInterface
 {
@@ -27,7 +36,8 @@ class ScopeRepository implements ScopeRepositoryInterface, DispatcherAwareInterf
     {
         $defined = ['userinfo', 'email'];
 
-        if (!in_array($identifier, $defined)) {
+        if (!in_array($identifier, $defined))
+        {
             return null;
         }
 
@@ -38,10 +48,11 @@ class ScopeRepository implements ScopeRepositoryInterface, DispatcherAwareInterf
     }
 
     /**
-     * @param Scope[] $scopes
-     * @param $grantType
-     * @param \League\OAuth2\Server\Entities\ClientEntityInterface $clientEntity
-     * @param null $userIdentifier
+     * @param   Scope[]                                               $scopes
+     * @param                                                         $grantType
+     * @param   \League\OAuth2\Server\Entities\ClientEntityInterface  $clientEntity
+     * @param   null                                                  $userIdentifier
+     *
      * @return mixed
      * @throws \League\OAuth2\Server\Exception\OAuthServerException
      * @since version
@@ -67,8 +78,9 @@ class ScopeRepository implements ScopeRepositoryInterface, DispatcherAwareInterf
     }
 
     /**
-     * @param object $client
-     * @param array $requestedScopes
+     * @param   object  $client
+     * @param   array   $requestedScopes
+     *
      * @return array
      * @throws \League\OAuth2\Server\Exception\OAuthServerException
      * @since version
@@ -77,26 +89,31 @@ class ScopeRepository implements ScopeRepositoryInterface, DispatcherAwareInterf
     {
         $clientScopes = $client->scopes;
 
-        if (empty($clientScopes)) {
+        if (empty($clientScopes))
+        {
             return $requestedScopes;
         }
 
         $clientScopes = array_map(function ($item) {
             $scope = new Scope();
-            $scope->setIdentifier((string)$item);
+            $scope->setIdentifier((string) $item);
+
             return $scope;
         }, $clientScopes);
 
-        if (empty($requestedScopes)) {
+        if (empty($requestedScopes))
+        {
             return $clientScopes;
         }
 
-        $finalizedScopes = [];
+        $finalizedScopes       = [];
         $clientScopesAsStrings = array_map('strval', $clientScopes);
 
-        foreach ($requestedScopes as $requestedScope) {
-            $requestedScopeAsString = (string)$requestedScope;
-            if (!\in_array($requestedScopeAsString, $clientScopesAsStrings, true)) {
+        foreach ($requestedScopes as $requestedScope)
+        {
+            $requestedScopeAsString = (string) $requestedScope;
+            if (!\in_array($requestedScopeAsString, $clientScopesAsStrings, true))
+            {
                 throw OAuthServerException::invalidScope($requestedScopeAsString);
             }
 
