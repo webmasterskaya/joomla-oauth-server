@@ -1,4 +1,11 @@
 <?php
+/**
+ * @package         Joomla.Administrator
+ * @subpackage      com_oauthserver
+ *
+ * @copyright   (c) 2024. Webmasterskaya. <https://webmasterskaya.xyz>
+ * @license         MIT; see LICENSE.txt
+ **/
 
 namespace Webmasterskaya\Component\OauthServer\Administrator\Model;
 
@@ -6,6 +13,8 @@ use Joomla\CMS\Crypt\Crypt;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\MVC\Model\AdminModel;
+
+\defined('_JEXEC') or die;
 
 class ClientModel extends AdminModel
 {
@@ -20,8 +29,9 @@ class ClientModel extends AdminModel
     public $typeAlias = 'com_oauthserver.client';
 
     /**
-     * @param array $data
-     * @param bool $loadData
+     * @param   array  $data
+     * @param   bool   $loadData
+     *
      * @return \Joomla\CMS\Form\Form|bool
      * @throws \Exception
      * @since version
@@ -30,7 +40,8 @@ class ClientModel extends AdminModel
     {
         $form = $this->loadForm('com_oauthserver.client', 'client', ['control' => 'jform', 'load_data' => $loadData]);
 
-        if (empty($form)) {
+        if (empty($form))
+        {
             return false;
         }
 
@@ -50,7 +61,8 @@ class ClientModel extends AdminModel
         // Check the session for previously entered form data.
         $data = Factory::getApplication()->getUserState('com_oauthserver.edit.client.data', []);
 
-        if (empty($data)) {
+        if (empty($data))
+        {
             $data = $this->getItem();
         }
 
@@ -67,26 +79,32 @@ class ClientModel extends AdminModel
     }
 
     /**
-     * @param \Webmasterskaya\Component\OauthServer\Administrator\Table\ClientTable $table
+     * @param   \Webmasterskaya\Component\OauthServer\Administrator\Table\ClientTable  $table
+     *
      * @return void
      * @throws \Exception
      * @since version
      */
     protected function prepareTable($table): void
     {
-        $app = Factory::getApplication();
+        $app   = Factory::getApplication();
         $input = $app->getInput();
-        $task = strtolower($input->getCmd('task', ''));
+        $task  = strtolower($input->getCmd('task', ''));
 
-        if ($task === 'save2reset' || empty($table->id)) {
+        if ($task === 'save2reset' || empty($table->id))
+        {
             $table->identifier = $this->generateNewIdentifier();
-            $table->secret = !!$table->public ? '' : $this->generateNewSecret();
+            $table->secret     = !!$table->public ? '' : $this->generateNewSecret();
         }
 
-        if (!!$table->public) {
+        if (!!$table->public)
+        {
             $table->secret = '';
-        } else {
-            if (empty($table->secret)) {
+        }
+        else
+        {
+            if (empty($table->secret))
+            {
                 $table->secret = $this->generateNewSecret();
             }
         }
