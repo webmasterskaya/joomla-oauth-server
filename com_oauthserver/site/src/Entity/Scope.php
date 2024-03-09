@@ -1,9 +1,18 @@
 <?php
+/**
+ * @package         Joomla.Site
+ * @subpackage      com_oauthserver
+ *
+ * @copyright   (c) 2024. Webmasterskaya. <https://webmasterskaya.xyz>
+ * @license         MIT; see LICENSE.txt
+ **/
 
 namespace Webmasterskaya\Component\OauthServer\Site\Entity;
 
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use League\OAuth2\Server\Entities\Traits\EntityTrait;
+
+\defined('_JEXEC') or die;
 
 final class Scope implements ScopeEntityInterface
 {
@@ -31,7 +40,8 @@ final class Scope implements ScopeEntityInterface
     }
 
     /**
-     * @param string $description
+     * @param   string  $description
+     *
      * @since version
      */
     public function setDescription(string $description): void

@@ -1,10 +1,19 @@
 <?php
+/**
+ * @package         Joomla.Site
+ * @subpackage      com_oauthserver
+ *
+ * @copyright   (c) 2024. Webmasterskaya. <https://webmasterskaya.xyz>
+ * @license         MIT; see LICENSE.txt
+ **/
 
 namespace Webmasterskaya\Component\OauthServer\Site\Entity;
 
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\Traits\ClientTrait;
 use League\OAuth2\Server\Entities\Traits\EntityTrait;
+
+\defined('_JEXEC') or die;
 
 class Client implements ClientEntityInterface
 {
@@ -22,7 +31,7 @@ class Client implements ClientEntityInterface
     }
 
     /**
-     * @param string[] $redirectUri
+     * @param   string[]  $redirectUri
      */
     public function setRedirectUri(array $redirectUri): void
     {
