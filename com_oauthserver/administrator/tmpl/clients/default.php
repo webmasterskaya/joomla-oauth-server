@@ -1,4 +1,11 @@
 <?php
+/**
+ * @package     Joomla.Administrator
+ * @subpackage  com_oauthserver
+ *
+ * @copyright   (c) 2024. Webmasterskaya. <https://webmasterskaya.xyz>
+ * @license     MIT; see LICENSE.txt
+ **/
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
@@ -15,10 +22,10 @@ defined('_JEXEC') or die;
 $wa = $this->document->getWebAssetManager();
 $wa->useScript('table.columns')
     ->useScript('multiselect');
-$user = Factory::getApplication()->getIdentity();
-$userId = $user->get('id');
+$user      = Factory::getApplication()->getIdentity();
+$userId    = $user->get('id');
 $listOrder = $this->escape($this->state->get('list.ordering'));
-$listDirn = $this->escape($this->state->get('list.direction'));
+$listDirn  = $this->escape($this->state->get('list.direction'));
 ?>
 
 <form action="<?php echo Route::_('index.php?option=com_oauthserver&view=clients'); ?>" method="post" name="adminForm"
@@ -34,7 +41,7 @@ $listDirn = $this->escape($this->state->get('list.direction'));
                 <?php if (empty($this->items)) : ?>
                     <div class="alert alert-info">
                         <span class="icon-info-circle" aria-hidden="true"></span><span
-                                class="visually-hidden"><?php echo Text::_('INFO'); ?></span>
+                            class="visually-hidden"><?php echo Text::_('INFO'); ?></span>
                         <?php echo Text::_('JGLOBAL_NO_MATCHING_RESULTS'); ?>
                     </div>
                 <?php else : ?>
@@ -70,9 +77,9 @@ $listDirn = $this->escape($this->state->get('list.direction'));
                         <?php foreach ($this->items as $i => $item) : ?>
 
                             <?php $canCreate = $user->authorise('core.create', 'com_oauthserver.clients');
-                            $canEdit = $user->authorise('core.edit', 'com_oauthserver.clients');
-                            $canCheckin = $user->authorise('core.manage', 'com_checkin') || $item->checked_out == $userId || is_null($item->checked_out);
-                            $canChange = $user->authorise('core.edit.state', 'com_oauthserver.clients') && $canCheckin; ?>
+                            $canEdit         = $user->authorise('core.edit', 'com_oauthserver.clients');
+                            $canCheckin      = $user->authorise('core.manage', 'com_checkin') || $item->checked_out == $userId || is_null($item->checked_out);
+                            $canChange       = $user->authorise('core.edit.state', 'com_oauthserver.clients') && $canCheckin; ?>
                             <tr class="row<?php echo $i % 2; ?>">
                                 <td class="w-1 text-center">
                                     <?php echo HTMLHelper::_('grid.id', $i, $item->id, false, 'cid', 'cb', $item->name); ?>
@@ -83,7 +90,7 @@ $listDirn = $this->escape($this->state->get('list.direction'));
                                             <?php echo HTMLHelper::_('jgrid.checkedout', $i, $item->editor, $item->checked_out_time, 'clients.', $canCheckin); ?>
                                         <?php endif; ?>
                                         <?php if ($canEdit) : ?>
-                                            <a href="<?php echo Route::_('index.php?option=com_oauthserver&task=client.edit&id=' . (int)$item->id); ?>"
+                                            <a href="<?php echo Route::_('index.php?option=com_oauthserver&task=client.edit&id=' . (int) $item->id); ?>"
                                                title="<?php echo Text::_('JACTION_EDIT'); ?> <?php echo $this->escape($item->name); ?>">
                                                 <?php echo $this->escape($item->name); ?></a>
                                         <?php else : ?>
@@ -102,7 +109,7 @@ $listDirn = $this->escape($this->state->get('list.direction'));
                                     </code>
                                 </td>
                                 <td class="d-none d-md-table-cell">
-                                    <?php echo Text::_((bool)$item->public ? 'JYES' : 'JNO'); ?>
+                                    <?php echo Text::_((bool) $item->public ? 'JYES' : 'JNO'); ?>
                                 </td>
                                 <td class="w-1 text-center">
                                     <?php echo $item->id; ?>
