@@ -1,27 +1,36 @@
 <?php
+/**
+ * @package         Joomla.Site
+ * @subpackage      com_oauthserver
+ *
+ * @copyright   (c) 2024. Webmasterskaya. <https://webmasterskaya.xyz>
+ * @license         MIT; see LICENSE.txt
+ **/
 
 namespace Webmasterskaya\Component\OauthServer\Site\Controller;
 
 use Joomla\CMS\Application\CMSApplication;
 use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\MVC\Controller\BaseController;
+use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\Uri\Uri;
+use Joomla\Input\Input;
+use Laminas\Diactoros\ServerRequestFactory;
+use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\CryptKey;
+use League\OAuth2\Server\Grant\AuthCodeGrant;
 use League\OAuth2\Server\Grant\ClientCredentialsGrant;
 use League\OAuth2\Server\Grant\ImplicitGrant;
 use League\OAuth2\Server\Grant\RefreshTokenGrant;
 use Webmasterskaya\Component\OauthServer\Site\Entity\User as UserEntity;
-use Joomla\CMS\MVC\Controller\BaseController;
-use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
-use Joomla\CMS\Router\Route;
-use Joomla\Input\Input;
-use Joomla\CMS\Uri\Uri;
-use Laminas\Diactoros\ServerRequestFactory;
-use League\OAuth2\Server\AuthorizationServer;
-use League\OAuth2\Server\Grant\AuthCodeGrant;
 use Webmasterskaya\Component\OauthServer\Site\Repository\AccessTokenRepository;
 use Webmasterskaya\Component\OauthServer\Site\Repository\AuthCodeRepository;
 use Webmasterskaya\Component\OauthServer\Site\Repository\ClientRepository;
 use Webmasterskaya\Component\OauthServer\Site\Repository\RefreshTokenRepository;
 use Webmasterskaya\Component\OauthServer\Site\Repository\ScopeRepository;
+
+\defined('_JEXEC') or die;
 
 class LoginController extends BaseController
 {
@@ -41,39 +50,41 @@ class LoginController extends BaseController
      */
     private function setupAuthorizationServer()
     {
-        if (isset($authorizationServer)) {
+        if (isset($authorizationServer))
+        {
             return;
         }
 
         // Init our repositories
         /**
-         * @var \Webmasterskaya\Component\OauthServer\Administrator\Model\ClientModel $clientModel
-         * @var \Webmasterskaya\Component\OauthServer\Administrator\Model\AccessTokenModel $accessTokenModel
-         * @var \Webmasterskaya\Component\OauthServer\Administrator\Model\AuthCodeModel $authCodeModel
+         * @var \Webmasterskaya\Component\OauthServer\Administrator\Model\ClientModel       $clientModel
+         * @var \Webmasterskaya\Component\OauthServer\Administrator\Model\AccessTokenModel  $accessTokenModel
+         * @var \Webmasterskaya\Component\OauthServer\Administrator\Model\AuthCodeModel     $authCodeModel
          * @var \Webmasterskaya\Component\OauthServer\Administrator\Model\RefreshTokenModel $refreshTokenModel
          */
-        $clientModel = $this->factory->createModel('Client', 'Administrator', ['request_ignore' => true]);
+        $clientModel      = $this->factory->createModel('Client', 'Administrator', ['request_ignore' => true]);
         $clientRepository = new ClientRepository($clientModel);
 
-        $accessTokenModel = $this->factory->createModel('AccessToken', 'Administrator', ['request_ignore' => true]);
+        $accessTokenModel      = $this->factory->createModel('AccessToken', 'Administrator', ['request_ignore' => true]);
         $accessTokenRepository = new AccessTokenRepository($accessTokenModel, $clientModel);
 
         $scopeRepository = new ScopeRepository($clientModel);
         $scopeRepository->setDispatcher($this->getDispatcher());
 
-        $authCodeModel = $this->factory->createModel('AuthCode', 'Administrator', ['request_ignore' => true]);
+        $authCodeModel      = $this->factory->createModel('AuthCode', 'Administrator', ['request_ignore' => true]);
         $authCodeRepository = new AuthCodeRepository($authCodeModel, $clientModel);
 
-        $refreshTokenModel = $this->factory->createModel('RefreshToken', 'Administrator', ['request_ignore' => true]);
+        $refreshTokenModel      = $this->factory->createModel('RefreshToken', 'Administrator', ['request_ignore' => true]);
         $refreshTokenRepository = new RefreshTokenRepository($refreshTokenModel, $accessTokenModel);
 
         $params = ComponentHelper::getParams('com_oauthserver');
 
         //TODO: Этот код нужно вынести в отдельный хелпер, для генерации закрытого и открытого ключей
-        if (false) {
+        if (false)
+        {
             /** @noinspection PhpUnreachableStatementInspection */
             $key = openssl_pkey_new([
-                "digest_alg" => "sha512",
+                "digest_alg"       => "sha512",
                 "private_key_bits" => 4096,
                 "private_key_type" => OPENSSL_KEYTYPE_RSA,
             ]);
@@ -83,13 +94,17 @@ class LoginController extends BaseController
             $pub = $pub["key"];
         }
 
-        if ($params->get('key_method_paste')) {
+        if ($params->get('key_method_paste'))
+        {
             $private_key = $params->get('private_key_raw');
-        } else {
+        }
+        else
+        {
             $private_key = $params->get('private_key_path');
         }
 
-        if (!!($private_key_passphrase = $params->get('private_key_passphrase'))) {
+        if (!!($private_key_passphrase = $params->get('private_key_passphrase')))
+        {
             $private_key = new CryptKey($private_key, $private_key_passphrase);
         }
 
@@ -105,7 +120,8 @@ class LoginController extends BaseController
 
         $access_token_ttl = $params->get('access_token_ttl', 'PT1H');
 
-        if (!!$params->get('enable_auth_code_grant', true)) {
+        if (!!$params->get('enable_auth_code_grant', true))
+        {
             $grant = new AuthCodeGrant(
                 $authCodeRepository,
                 $refreshTokenRepository,
@@ -120,7 +136,8 @@ class LoginController extends BaseController
             );
         }
 
-        if (!!$params->get('enable_refresh_token_grant', false)) {
+        if (!!$params->get('enable_refresh_token_grant', false))
+        {
             $grant = new RefreshTokenGrant($refreshTokenRepository);
 
             $grant->setRefreshTokenTTL(new \DateInterval($params->get('refresh_token_ttl', 'P1M')));
@@ -131,14 +148,16 @@ class LoginController extends BaseController
             );
         }
 
-        if (!!$params->get('enable_client_credentials_grant', false)) {
+        if (!!$params->get('enable_client_credentials_grant', false))
+        {
             $server->enableGrantType(
                 new ClientCredentialsGrant(),
                 new \DateInterval($access_token_ttl)
             );
         }
 
-        if (!!$params->get('enable_implicit_grant', false)) {
+        if (!!$params->get('enable_implicit_grant', false))
+        {
             $server->enableGrantType(
                 new ImplicitGrant(new \DateInterval($access_token_ttl)),
                 new \DateInterval($access_token_ttl)
@@ -155,11 +174,12 @@ class LoginController extends BaseController
      */
     public function authorize(): void
     {
-        $app = $this->app;
+        $app  = $this->app;
         $user = $app->getIdentity();
-        $uri = Uri::getInstance();
+        $uri  = Uri::getInstance();
 
-        if (!$user->id) {
+        if (!$user->id)
+        {
             $return = http_build_query(['return' => base64_encode($uri->toString(['scheme', 'user', 'pass', 'host', 'port', 'path']))]);
             $this->app->setUserState('oauthserver.login.authorize.request', $uri->getQuery(true));
             $this->app->enqueueMessage('Необходимо авторизоваться!');
@@ -167,15 +187,17 @@ class LoginController extends BaseController
         }
 
         $state_request = $this->app->getUserState('oauthserver.login.authorize.request');
-        if (!empty($state_request) && empty($uri->getQuery(true))) {
-            foreach ($state_request as $k => $v) {
+        if (!empty($state_request) && empty($uri->getQuery(true)))
+        {
+            foreach ($state_request as $k => $v)
+            {
                 $uri->setVar($k, $v);
             }
         }
         $this->app->setUserState('oauthserver.login.authorize.request', []);
 
-        $server = $this->authorizationServer;
-        $serverRequest = ServerRequestFactory::fromGlobals();
+        $server         = $this->authorizationServer;
+        $serverRequest  = ServerRequestFactory::fromGlobals();
         $serverResponse = $app->getResponse();
 
         // Validate the HTTP request and return an AuthorizationRequest object.
@@ -204,8 +226,8 @@ class LoginController extends BaseController
      */
     public function token(): void
     {
-        $server = $this->authorizationServer;
-        $serverRequest = ServerRequestFactory::fromGlobals();
+        $server         = $this->authorizationServer;
+        $serverRequest  = ServerRequestFactory::fromGlobals();
         $serverResponse = $this->app->getResponse();
         $this->app->setResponse($server->respondToAccessTokenRequest($serverRequest, $serverResponse));
         $this->app->getInput()->set('format', 'json');
