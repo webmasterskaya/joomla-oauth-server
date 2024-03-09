@@ -1,18 +1,27 @@
 <?php
+/**
+ * @package         Joomla.Administrator
+ * @subpackage      com_oauthserver
+ *
+ * @copyright   (c) 2024. Webmasterskaya. <https://webmasterskaya.xyz>
+ * @license         MIT; see LICENSE.txt
+ **/
 
 namespace Webmasterskaya\Component\OauthServer\Administrator\Table;
 
 use Joomla\CMS\Table\Table;
 use Joomla\Database\DatabaseDriver;
 
+\defined('_JEXEC') or die;
+
 /**
- * @property int $id
- * @property string $identifier
+ * @property int                                 $id
+ * @property string                              $identifier
  * @property \DateTimeImmutable|\DateTime|string $expiry
- * @property ?int $user_id
- * @property string|array|null $scopes
- * @property int $client_id
- * @property int $revoked
+ * @property ?int                                $user_id
+ * @property string|array|null                   $scopes
+ * @property int                                 $client_id
+ * @property int                                 $revoked
  *
  * @since version
  */

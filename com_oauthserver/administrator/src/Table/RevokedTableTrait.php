@@ -1,49 +1,51 @@
 <?php
+/**
+ * @package         Joomla.Administrator
+ * @subpackage      com_oauthserver
+ *
+ * @copyright   (c) 2024. Webmasterskaya. <https://webmasterskaya.xyz>
+ * @license         MIT; see LICENSE.txt
+ **/
 
 namespace Webmasterskaya\Component\OauthServer\Administrator\Table;
 
 use Joomla\CMS\Event\AbstractEvent;
 use Joomla\CMS\Language\Text;
+use Joomla\Database\DatabaseDriver;
+
+\defined('_JEXEC') or die;
 
 trait RevokedTableTrait
 {
     /**
      * @var    string
-     * @since  version
+     * @since        version
      * @noinspection PhpMissingFieldTypeInspection
      */
     protected $_tbl = '';
 
     /**
      * @var    string
-     * @since  version
+     * @since        version
      * @noinspection PhpMissingFieldTypeInspection
      */
     protected $_tbl_key = '';
 
     /**
      * @var    array
-     * @since  version
+     * @since        version
      * @noinspection PhpMissingFieldTypeInspection
      */
     protected $_tbl_keys = [];
 
     /**
-     * @var    \Joomla\Database\DatabaseDriver
-     * @since  version
+     * @var    DatabaseDriver
+     * @since        version
      * @noinspection PhpMissingFieldTypeInspection
      */
     protected $_db;
 
-    abstract public function getDispatcher();
-
-    abstract public function setError($error);
-
-    abstract public function getColumnAlias($column);
-
     abstract public function getDbo();
-
-    abstract public function appendPrimaryKeys($query, $pk = null);
 
     public function revoke($pks = null): bool
     {
@@ -52,31 +54,40 @@ trait RevokedTableTrait
             'onTableBeforeRevoke',
             [
                 'subject' => $this,
-                'pks' => $pks,
+                'pks'     => $pks,
             ]
         );
         $this->getDispatcher()->dispatch('onTableBeforeRevoke', $event);
 
-        if (!\is_null($pks)) {
-            if (!\is_array($pks)) {
+        if (!\is_null($pks))
+        {
+            if (!\is_array($pks))
+            {
                 $pks = [$pks];
             }
 
-            foreach ($pks as $key => $pk) {
-                if (!\is_array($pk)) {
+            foreach ($pks as $key => $pk)
+            {
+                if (!\is_array($pk))
+                {
                     $pks[$key] = [$this->_tbl_key => $pk];
                 }
             }
         }
 
         // If there are no primary keys set check to see if the instance key is set.
-        if (empty($pks)) {
+        if (empty($pks))
+        {
             $pk = [];
 
-            foreach ($this->_tbl_keys as $key) {
-                if ($this->$key) {
+            foreach ($this->_tbl_keys as $key)
+            {
+                if ($this->$key)
+                {
                     $pk[$key] = $this->$key;
-                } else {
+                }
+                else
+                {
                     // We don't have a full primary key - return false
                     $this->setError(Text::_('JLIB_DATABASE_ERROR_NO_ROWS_SELECTED'));
 
@@ -89,7 +100,8 @@ trait RevokedTableTrait
 
         $revokedField = $this->getColumnAlias('revoked');
 
-        foreach ($pks as $pk) {
+        foreach ($pks as $pk)
+        {
             $query = $this->_db->getQuery(true)
                 ->update($this->_db->quoteName($this->_tbl))
                 ->set($this->_db->quoteName($revokedField) . ' = 0');
@@ -99,9 +111,12 @@ trait RevokedTableTrait
 
             $this->_db->setQuery($query);
 
-            try {
+            try
+            {
                 $this->_db->execute();
-            } catch (\RuntimeException $e) {
+            }
+            catch (\RuntimeException $e)
+            {
                 $this->setError($e->getMessage());
 
                 return false;
@@ -110,13 +125,16 @@ trait RevokedTableTrait
             // If the Table instance value is in the list of primary keys that were set, set the instance.
             $ours = true;
 
-            foreach ($this->_tbl_keys as $key) {
-                if ($this->$key != $pk[$key]) {
+            foreach ($this->_tbl_keys as $key)
+            {
+                if ($this->$key != $pk[$key])
+                {
                     $ours = false;
                 }
             }
 
-            if ($ours) {
+            if ($ours)
+            {
                 $this->$revokedField = 0;
             }
         }
@@ -128,11 +146,19 @@ trait RevokedTableTrait
             'onTableAfterRevoke',
             [
                 'subject' => $this,
-                'pks' => $pks
+                'pks'     => $pks
             ]
         );
         $this->getDispatcher()->dispatch('onTableAfterRevoke', $event);
 
         return true;
     }
+
+    abstract public function getDispatcher();
+
+    abstract public function setError($error);
+
+    abstract public function getColumnAlias($column);
+
+    abstract public function appendPrimaryKeys($query, $pk = null);
 }

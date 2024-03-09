@@ -1,22 +1,30 @@
 <?php
+/**
+ * @package         Joomla.Administrator
+ * @subpackage      com_oauthserver
+ *
+ * @copyright   (c) 2024. Webmasterskaya. <https://webmasterskaya.xyz>
+ * @license         MIT; see LICENSE.txt
+ **/
 
 namespace Webmasterskaya\Component\OauthServer\Administrator\Table;
 
 use Joomla\CMS\Table\Table;
 use Joomla\Database\DatabaseDriver;
-use League\OAuth2\Server\Entities\ClientEntityInterface;
+
+\defined('_JEXEC') or die;
 
 /**
- * @property int $id;
- * @property string $identifier;
- * @property string $name;
- * @property ?string $secret;
- * @property string|array|null $redirect_uris;
- * @property string|array|null $grants;
- * @property string|array|null $scopes;
- * @property int $active;
- * @property int $public;
- * @property int $allow_plain_text_pkce;
+ * @property int               $id                   ;
+ * @property string            $identifier           ;
+ * @property string            $name                 ;
+ * @property ?string           $secret               ;
+ * @property string|array|null $redirect_uris        ;
+ * @property string|array|null $grants               ;
+ * @property string|array|null $scopes               ;
+ * @property int               $active               ;
+ * @property int               $public               ;
+ * @property int               $allow_plain_text_pkce;
  *
  * @since version
  */
@@ -41,7 +49,7 @@ class ClientTable extends Table
     /**
      * Constructor.
      *
-     * @param DatabaseDriver $db Database connector object
+     * @param   DatabaseDriver  $db  Database connector object
      *
      * @since  1.0.0
      */

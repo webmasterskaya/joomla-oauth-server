@@ -1,19 +1,25 @@
 <?php
+/**
+ * @package         Joomla.Administrator
+ * @subpackage      com_oauthserver
+ *
+ * @copyright   (c) 2024. Webmasterskaya. <https://webmasterskaya.xyz>
+ * @license         MIT; see LICENSE.txt
+ **/
 
 namespace Webmasterskaya\Component\OauthServer\Administrator\Table;
 
-use DateTimeImmutable;
 use Joomla\CMS\Table\Table;
 use Joomla\Database\DatabaseDriver;
-use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
-use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
+
+\defined('_JEXEC') or die;
 
 /**
- * @property int $id
- * @property string $identifier
+ * @property int                                 $id
+ * @property string                              $identifier
  * @property \DateTimeImmutable|\DateTime|string $expiry
- * @property int $revoked
- * @property int|null $access_token_id
+ * @property int                                 $revoked
+ * @property int|null                            $access_token_id
  *
  * @since version
  */
