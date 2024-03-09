@@ -1,4 +1,11 @@
 <?php
+/**
+ * @package     Joomla.Administrator
+ * @subpackage  com_oauthserver
+ *
+ * @copyright   (c) 2024. Webmasterskaya. <https://webmasterskaya.xyz>
+ * @license     MIT; see LICENSE.txt
+ **/
 
 namespace Webmasterskaya\Component\OauthServer\Administrator\View\Client;
 
@@ -9,8 +16,9 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\GenericDataException;
 use Joomla\CMS\Object\CMSObject;
 use Joomla\CMS\Toolbar\Toolbar;
-use Joomla\CMS\Toolbar\ToolbarFactoryInterface;
 use Joomla\CMS\Toolbar\ToolbarHelper;
+
+\defined('_JEXEC') or die;
 
 class HtmlView extends \Joomla\CMS\MVC\View\HtmlView
 {
@@ -44,7 +52,7 @@ class HtmlView extends \Joomla\CMS\MVC\View\HtmlView
     /**
      * Execute and display a template script.
      *
-     * @param string $tpl The name of the template file to parse.
+     * @param   string  $tpl  The name of the template file to parse.
      *
      * @throws \Exception
      *
@@ -53,11 +61,12 @@ class HtmlView extends \Joomla\CMS\MVC\View\HtmlView
     public function display($tpl = null): void
     {
         $this->state = $this->get('State');
-        $this->form = $this->get('Form');
-        $this->item = $this->get('Item');
+        $this->form  = $this->get('Form');
+        $this->item  = $this->get('Item');
 
         // Check for errors
-        if (count($errors = $this->get('Errors'))) {
+        if (count($errors = $this->get('Errors')))
+        {
             throw new GenericDataException(implode('\n', $errors), 500);
         }
 
@@ -83,7 +92,7 @@ class HtmlView extends \Joomla\CMS\MVC\View\HtmlView
 
         $canDo = ContentHelper::getActions('com_oauthserver', 'client');
 
-        $user = $this->getCurrentUser();
+        $user    = $this->getCurrentUser();
         $toolbar = Toolbar::getInstance('toolbar');
 
         // Set page title
@@ -91,7 +100,8 @@ class HtmlView extends \Joomla\CMS\MVC\View\HtmlView
         $title = ($isNew) ? Text::_('COM_OAUTHSERVER_CLIENT_ADD') : Text::_('COM_OAUTHSERVER_CLIENT_EDIT');
         ToolbarHelper::title(Text::_('COM_OAUTHSERVER') . ': ' . $title, 'edit');
 
-        if ($isNew && (count($user->getAuthorisedCategories('com_oauthserver', 'core.create')) > 0)) {
+        if ($isNew && (count($user->getAuthorisedCategories('com_oauthserver', 'core.create')) > 0))
+        {
             $toolbar->apply('client.apply');
 
             $dropdown = $toolbar->dropdownButton('save-group');
@@ -101,18 +111,23 @@ class HtmlView extends \Joomla\CMS\MVC\View\HtmlView
                     $actions->save2new('client.save2new');
                 }
             );
-        } else {
+        }
+        else
+        {
             $itemEditable = $canDo->get('core.edit');
-            if ($itemEditable) {
+            if ($itemEditable)
+            {
                 $toolbar->apply('client.apply');
             }
 
             $dropdown = $toolbar->dropdownButton('save-group');
             $dropdown->configure(
                 function (Toolbar $childBar) use ($itemEditable, $canDo) {
-                    if ($itemEditable) {
+                    if ($itemEditable)
+                    {
                         $childBar->save('client.save');
-                        if ($canDo->get('core.create')) {
+                        if ($canDo->get('core.create'))
+                        {
                             $childBar->save2new('client.save2new');
                         }
                         $childBar
