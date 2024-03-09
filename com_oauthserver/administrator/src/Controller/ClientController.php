@@ -1,4 +1,11 @@
 <?php
+/**
+ * @package         Joomla.Administrator
+ * @subpackage      com_oauthserver
+ *
+ * @copyright   (c) 2024. Webmasterskaya. <https://webmasterskaya.xyz>
+ * @license         MIT; see LICENSE.txt
+ **/
 
 namespace Webmasterskaya\Component\OauthServer\Administrator\Controller;
 
@@ -7,6 +14,8 @@ use Joomla\CMS\Form\FormFactoryInterface;
 use Joomla\CMS\MVC\Controller\FormController;
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\Input\Input;
+
+\defined('_JEXEC') or die;
 
 class ClientController extends FormController
 {
@@ -20,11 +29,12 @@ class ClientController extends FormController
     protected $text_prefix = 'COM_OAUTHSERVER_CLIENT';
 
     /**
-     * @param array $config
-     * @param \Joomla\CMS\MVC\Factory\MVCFactoryInterface|null $factory
-     * @param \Joomla\CMS\Application\CMSApplication|null $app
-     * @param \Joomla\Input\Input|null $input
-     * @param \Joomla\CMS\Form\FormFactoryInterface|null $formFactory
+     * @param   array                                             $config
+     * @param   \Joomla\CMS\MVC\Factory\MVCFactoryInterface|null  $factory
+     * @param   \Joomla\CMS\Application\CMSApplication|null       $app
+     * @param   \Joomla\Input\Input|null                          $input
+     * @param   \Joomla\CMS\Form\FormFactoryInterface|null        $formFactory
+     *
      * @throws \Exception
      * @since version
      */
