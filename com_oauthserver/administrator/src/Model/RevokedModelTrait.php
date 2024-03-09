@@ -1,99 +1,109 @@
 <?php
+/**
+ * @package         Joomla.Administrator
+ * @subpackage      com_oauthserver
+ *
+ * @copyright   (c) 2024. Webmasterskaya. <https://webmasterskaya.xyz>
+ * @license         MIT; see LICENSE.txt
+ **/
 
 namespace Webmasterskaya\Component\OauthServer\Administrator\Model;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\CMS\Table\Table;
 use Joomla\CMS\User\User;
+
+\defined('_JEXEC') or die;
 
 trait RevokedModelTrait
 {
     /**
      * @var string
-     * @since version
+     * @since        version
      * @noinspection PhpMissingFieldTypeInspection
      */
     protected $option;
 
     /**
      * @var string
-     * @since version
+     * @since        version
      * @noinspection PhpMissingFieldTypeInspection
      */
     protected $name;
 
     /**
      * @var array
-     * @since version
+     * @since        version
      * @noinspection PhpMissingFieldTypeInspection
      */
     protected $events_map;
 
     /**
      * @var string
-     * @since version
+     * @since        version
      * @noinspection PhpMissingFieldTypeInspection
      */
     protected $event_before_change_state;
 
     /**
      * @var string
-     * @since version
+     * @since        version
      * @noinspection PhpMissingFieldTypeInspection
      */
     protected $event_change_state;
 
-    abstract public function getTable($name = '', $prefix = '', $options = []);
-
-    abstract protected function getCurrentUser(): User;
-
-    abstract public function setError($error);
-
-    abstract protected function cleanCache($group = null);
-
     public function revoke(&$identifiers): bool
     {
         $user = $this->getCurrentUser();
-        /** @var \Joomla\CMS\Table\Table $table */
-        $table = $this->getTable();
-        $identifiers = (array)$identifiers;
-        $pks = [];
+        /** @var Table $table */
+        $table       = $this->getTable();
+        $identifiers = (array) $identifiers;
+        $pks         = [];
 
         $context = $this->option . '.' . $this->name;
 
         // Include the plugins for the change of state event.
         PluginHelper::importPlugin($this->events_map['change_state']);
 
-        foreach ($identifiers as $i => $identifier) {
+        foreach ($identifiers as $i => $identifier)
+        {
             $table->reset();
 
-            if ($table->load(['identifier' => $identifier])) {
+            if ($table->load(['identifier' => $identifier]))
+            {
                 $revokedColumnName = $table->getColumnAlias('revoked');
 
-                if (property_exists($table, $revokedColumnName) && $table->get($revokedColumnName, 1) == 0) {
+                if (property_exists($table, $revokedColumnName) && $table->get($revokedColumnName, 1) == 0)
+                {
                     unset($identifiers[$i]);
-                } else {
+                }
+                else
+                {
                     $pks[] = $table->get('id');
                 }
             }
         }
 
         // Check if there are items to change
-        if (!\count($pks)) {
+        if (!\count($pks))
+        {
             return true;
         }
 
         // Trigger the before change state event.
         $result = Factory::getApplication()->triggerEvent($this->event_before_change_state, [$context, $pks, 0]);
 
-        if (\in_array(false, $result, true)) {
+        if (\in_array(false, $result, true))
+        {
             $this->setError($table->getError());
 
             return false;
         }
 
         // Attempt to change the state of the records.
-        if (!$table->revoke($pks, $user->id)) {
+        if (!$table->revoke($pks, $user->id))
+        {
             $this->setError($table->getError());
 
             return false;
@@ -102,7 +112,8 @@ trait RevokedModelTrait
         // Trigger the change state event.
         $result = Factory::getApplication()->triggerEvent($this->event_change_state, [$context, $pks, 0]);
 
-        if (\in_array(false, $result, true)) {
+        if (\in_array(false, $result, true))
+        {
             $this->setError($table->getError());
 
             return false;
@@ -113,4 +124,12 @@ trait RevokedModelTrait
 
         return true;
     }
+
+    abstract protected function getCurrentUser(): User;
+
+    abstract public function getTable($name = '', $prefix = '', $options = []);
+
+    abstract public function setError($error);
+
+    abstract protected function cleanCache($group = null);
 }

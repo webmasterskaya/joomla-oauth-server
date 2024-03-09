@@ -1,4 +1,11 @@
 <?php
+/**
+ * @package         Joomla.Administrator
+ * @subpackage      com_oauthserver
+ *
+ * @copyright   (c) 2024. Webmasterskaya. <https://webmasterskaya.xyz>
+ * @license         MIT; see LICENSE.txt
+ **/
 
 namespace Webmasterskaya\Component\OauthServer\Administrator\Model;
 
@@ -6,6 +13,9 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\CMS\MVC\Model\ListModel;
 use Joomla\Database\ParameterType;
+use Joomla\Database\QueryInterface;
+
+\defined('_JEXEC') or die;
 
 class ClientsModel extends ListModel
 {
@@ -21,8 +31,8 @@ class ClientsModel extends ListModel
     /**
      * Constructor.
      *
-     * @param array $config An optional associative array of configuration settings.
-     * @param MVCFactoryInterface|null $factory The factory.
+     * @param   array                     $config   An optional associative array of configuration settings.
+     * @param   MVCFactoryInterface|null  $factory  The factory.
      *
      * @throws \Exception
      *
@@ -31,7 +41,8 @@ class ClientsModel extends ListModel
     public function __construct($config = [], MVCFactoryInterface $factory = null)
     {
         // Add the ordering filtering fields whitelist
-        if (empty($config['filter_fields'])) {
+        if (empty($config['filter_fields']))
+        {
             $config['filter_fields'] = [
                 'id', 'client.id'
             ];
@@ -43,8 +54,8 @@ class ClientsModel extends ListModel
     /**
      * Method to auto-populate the model state.
      *
-     * @param string $ordering An optional ordering field.
-     * @param string $direction An optional direction (asc|desc).
+     * @param   string  $ordering   An optional ordering field.
+     * @param   string  $direction  An optional direction (asc|desc).
      *
      * @throws  \Exception
      *
@@ -55,7 +66,8 @@ class ClientsModel extends ListModel
         $app = Factory::getApplication();
 
         // Adjust the context to support modal layouts.
-        if ($layout = $app->input->get('layout')) {
+        if ($layout = $app->input->get('layout'))
+        {
             $this->context .= '.' . $layout;
         }
 
@@ -68,7 +80,7 @@ class ClientsModel extends ListModel
     /**
      * Method to get a store id based on model configuration state.
      *
-     * @param string $id A prefix for the store id.
+     * @param   string  $id  A prefix for the store id.
      *
      * @return  string  A store id.
      *
@@ -84,13 +96,13 @@ class ClientsModel extends ListModel
     /**
      * Method to get a DatabaseQuery object for retrieving the data set from a database.
      *
-     * @return  \Joomla\Database\QueryInterface  A QueryInterface object to retrieve the data set.
+     * @return  QueryInterface  A QueryInterface object to retrieve the data set.
      *
      * @throws  \Exception
      *
      * @since  1.0.0
      */
-    protected function getListQuery(): \Joomla\Database\QueryInterface
+    protected function getListQuery(): QueryInterface
     {
         $db = $this->getDatabase();
 
@@ -101,13 +113,14 @@ class ClientsModel extends ListModel
 
         // Filter by search state
         $search = $this->getState('filter.search');
-        if (!empty($search)) {
+        if (!empty($search))
+        {
             $query->where('client.name LIKE :search')
                 ->bind(':search', $search, ParameterType::STRING);
         }
 
         // Add the list ordering clause
-        $ordering = $this->state->get('list.ordering', 'client.id');
+        $ordering  = $this->state->get('list.ordering', 'client.id');
         $direction = $this->state->get('list.direction', 'desc');
         $query->order($db->escape($ordering) . ' ' . $db->escape($direction));
 
