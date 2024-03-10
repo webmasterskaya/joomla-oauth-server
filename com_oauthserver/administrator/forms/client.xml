@@ -1,70 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
 <form>
-    <config>
-        <inlinehelp button="show"/>
-    </config>
-    <fieldset name="global">
-        <field
-                name="id"
-                type="number"
-                label="JGLOBAL_FIELD_ID_LABEL"
-                default="0"
-                readonly="true"
-                class="readonly"
-        />
-        <field name="name"
-               type="text"
-               label="COM_OAUTHSERVER_CLIENT_NAME_LABEL"
-               required="1"
-        />
-        <field name="public"
-               type="radio"
-               layout="joomla.form.field.radio.switcher"
-               label="COM_OAUTHSERVER_CLIENT_PUBLIC_LABEL"
-               description="COM_OAUTHSERVER_CLIENT_PUBLIC_DESCRIPTION"
-               filter="integer"
-               default="0">
-            <option value="1">JYES</option>
-            <option value="0">JNO</option>
-        </field>
-        <field
-                name="redirect_uris"
-                type="subform"
-                label="COM_OAUTHSERVER_CLIENT_REDIRECT_URI_LABEL"
-                description="COM_OAUTHSERVER_CLIENT_REDIRECT_URI_DESCRIPTION"
-                multiple="true"
-                required="true"
-                hiddenLabel="true"
-                layout="joomla.form.field.subform.repeatable-table"
-        >
-            <form>
-                <field
-                        label="COM_OAUTHSERVER_CLIENT_REDIRECT_URI_LABEL"
-                        name="uri"
-                        type="url"
-                        filter="url"
-                        validate="url"
-                        class="w-100"
-                />
-            </form>
-        </field>
-        <field name="allow_plain_text_pkce"
-               type="radio"
-               layout="joomla.form.field.radio.switcher"
-               label="COM_OAUTHSERVER_CLIENT_ALLOW_PLAIN_TEXT_PKCE_LABEL"
-               description="COM_OAUTHSERVER_CLIENT_ALLOW_PLAIN_TEXT_PKCE_DESCRIPTION"
-               filter="integer"
-               default="1">
-            <option value="1">JYES</option>
-            <option value="0">JNO</option>
-        </field>
-        <field name="identifier"
-               type="text"
-               readonly="1"
-               label="COM_OAUTHSERVER_CLIENT_IDENTIFIER_LABEL"/>
-        <field name="secret"
-               type="text"
-               readonly="1"
-               label="COM_OAUTHSERVER_CLIENT_SECRET_LABEL"/>
-    </fieldset>
+	<config>
+		<inlinehelp button="show"/>
+	</config>
+	<fieldset name="global">
+		<field
+			name="id"
+			type="number"
+			label="JGLOBAL_FIELD_ID_LABEL"
+			default="0"
+			readonly="true"
+			class="readonly"
+		/>
+		<field name="name"
+			   type="text"
+			   label="COM_OAUTHSERVER_CLIENT_NAME_LABEL"
+			   required="1"
+		/>
+		<field name="public"
+			   type="radio"
+			   layout="joomla.form.field.radio.switcher"
+			   label="COM_OAUTHSERVER_CLIENT_PUBLIC_LABEL"
+			   description="COM_OAUTHSERVER_CLIENT_PUBLIC_DESCRIPTION"
+			   filter="integer"
+			   default="0">
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
+		</field>
+		<field
+			name="redirect_uris"
+			type="subform"
+			label="COM_OAUTHSERVER_CLIENT_REDIRECT_URI_LABEL"
+			description="COM_OAUTHSERVER_CLIENT_REDIRECT_URI_DESCRIPTION"
+			multiple="true"
+			required="true"
+			hiddenLabel="true"
+			layout="joomla.form.field.subform.repeatable-table"
+		>
+			<form>
+				<field
+					label="COM_OAUTHSERVER_CLIENT_REDIRECT_URI_LABEL"
+					name="uri"
+					type="url"
+					filter="url"
+					validate="url"
+					class="w-100"
+				/>
+			</form>
+		</field>
+		<field name="allow_plain_text_pkce"
+			   type="radio"
+			   layout="joomla.form.field.radio.switcher"
+			   label="COM_OAUTHSERVER_CLIENT_ALLOW_PLAIN_TEXT_PKCE_LABEL"
+			   description="COM_OAUTHSERVER_CLIENT_ALLOW_PLAIN_TEXT_PKCE_DESCRIPTION"
+			   filter="integer"
+			   default="1">
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
+		</field>
+		<field name="identifier"
+			   type="text"
+			   layout="components.oauthserver.field.copy.text"
+			   readonly="1"
+			   label="COM_OAUTHSERVER_CLIENT_IDENTIFIER_LABEL"/>
+		<field name="secret"
+			   type="text"
+			   layout="components.oauthserver.field.copy.text"
+			   readonly="1"
+			   label="COM_OAUTHSERVER_CLIENT_SECRET_LABEL"/>
+	</fieldset>
 </form>
