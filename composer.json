@@ -1,12 +1,13 @@
 {
   "type": "joomla-package",
-  "description": "OAuth Server for Joomla 4.3+ using the PHP League's OAuth2 Server",
+  "description": "OAuth Server for Joomla",
   "license": "MIT",
   "homepage": "https://github.com/webmasterskaya/joomla-oauth-server",
   "authors": [
     {
       "name": "Artem Vasilev",
-      "email": "kern.usr@gmial.com"
+      "email": "dev@webmasterskaya.xyz",
+      "homepage": "https://webmasterskaya.xyz/"
     }
   ],
   "minimum-stability": "stable",
