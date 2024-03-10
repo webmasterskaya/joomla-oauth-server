@@ -11,42 +11,11 @@ namespace Webmasterskaya\Component\OauthServer\Administrator\Table;
 
 use Joomla\CMS\Event\AbstractEvent;
 use Joomla\CMS\Language\Text;
-use Joomla\Database\DatabaseDriver;
 
 \defined('_JEXEC') or die;
 
 trait RevokedTableTrait
 {
-    /**
-     * @var    string
-     * @since        version
-     * @noinspection PhpMissingFieldTypeInspection
-     */
-    protected $_tbl = '';
-
-    /**
-     * @var    string
-     * @since        version
-     * @noinspection PhpMissingFieldTypeInspection
-     */
-    protected $_tbl_key = '';
-
-    /**
-     * @var    array
-     * @since        version
-     * @noinspection PhpMissingFieldTypeInspection
-     */
-    protected $_tbl_keys = [];
-
-    /**
-     * @var    DatabaseDriver
-     * @since        version
-     * @noinspection PhpMissingFieldTypeInspection
-     */
-    protected $_db;
-
-    abstract public function getDbo();
-
     public function revoke($pks = null): bool
     {
         // Pre-processing by observers
@@ -153,6 +122,8 @@ trait RevokedTableTrait
 
         return true;
     }
+
+    abstract public function getDbo();
 
     abstract public function getDispatcher();
 
