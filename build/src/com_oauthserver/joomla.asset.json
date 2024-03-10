@@ -1,0 +1,32 @@
+{
+  "$schema": "https://developer.joomla.org/schemas/json-schema/web_assets.json",
+  "name": "com_oauthserver",
+  "version": "version",
+  "description": "Joomla CMS",
+  "license": "MIT",
+  "assets": [
+    {
+      "name": "com_oauthserver.field.copy.es5",
+      "type": "script",
+      "uri": "com_oauthserver/field-copy-es5.min.js",
+      "dependencies": [
+        "core"
+      ],
+      "attributes": {
+        "nomodule": true,
+        "defer": true
+      }
+    },
+    {
+      "name": "com_oauthserver.field.copy",
+      "type": "script",
+      "uri": "com_oauthserver/field-copy.min.js",
+      "dependencies": [
+        "com_oauthserver.field.copy.es5"
+      ],
+      "attributes": {
+        "type": "module"
+      }
+    }
+  ]
+}

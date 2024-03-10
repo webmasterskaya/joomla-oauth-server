@@ -5,10 +5,13 @@
 .vscode
 /tmp
 /.php-cs-fixer.cache
+/com_oauthserver/media
 
 composer.phar
 com_oauthserver/administrator/vendor
 !com_oauthserver/administrator/vendor/.gitkeep
+
+node_modules/
 
 ._*
 .Spotlight-V100
