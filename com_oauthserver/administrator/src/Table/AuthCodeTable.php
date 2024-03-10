@@ -15,13 +15,13 @@ use Joomla\Database\DatabaseDriver;
 \defined('_JEXEC') or die;
 
 /**
- * @property int                                 $id
- * @property string                              $identifier
- * @property \DateTimeImmutable|\DateTime|string $expiry
- * @property int|null                            $user_id
- * @property string|array|null                   $scopes
- * @property int                                 $revoked
- * @property int                                 $client_id
+ * @property int                       $id
+ * @property string                    $identifier
+ * @property \DateTimeInterface|string $expiry
+ * @property int|null                  $userId
+ * @property string|array              $scopes
+ * @property int                       $clientId
+ * @property bool|int                  $revoked
  *
  * @since version
  */
@@ -48,5 +48,8 @@ class AuthCodeTable extends Table implements RevokedTableInterface
     public function __construct(DatabaseDriver $db)
     {
         parent::__construct('#__webmasterskaya_oauthserver_authorization_codes', 'id', $db);
+
+        $this->setColumnAlias('client_id', 'clientId');
+        $this->setColumnAlias('user_id', 'userId');
     }
 }
