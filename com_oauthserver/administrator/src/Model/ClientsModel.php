@@ -9,7 +9,6 @@
 
 namespace Webmasterskaya\Component\OauthServer\Administrator\Model;
 
-use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\CMS\MVC\Model\ListModel;
 use Joomla\Database\ParameterType;
@@ -63,14 +62,6 @@ class ClientsModel extends ListModel
      */
     protected function populateState($ordering = null, $direction = null): void
     {
-        $app = Factory::getApplication();
-
-        // Adjust the context to support modal layouts.
-        if ($layout = $app->input->get('layout'))
-        {
-            $this->context .= '.' . $layout;
-        }
-
         // List state information
         $ordering = empty($ordering) ? 'client.id' : $ordering;
 
@@ -108,7 +99,7 @@ class ClientsModel extends ListModel
 
         $query = $db->getQuery(true);
 
-        $query->select(['client.id', 'client.name', 'client.secret', 'client.identifier', 'client.public', 'client.redirect_uris', 'client.allow_plain_text_pkce', 'client.scopes', 'client.grants'])
+        $query->select(['client.id', 'client.name', 'client.secret', 'client.identifier', 'client.public', 'client.scopes', 'client.grants'])
             ->from($db->qn('#__webmasterskaya_oauthserver_clients', 'client'));
 
         // Filter by search state
