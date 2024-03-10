@@ -8,7 +8,7 @@
     <creationDate>March 2024</creationDate>
     <copyright>Copyright (C) 2024 Webmasterskaya. All rights reserved.</copyright>
     <license>MIT; see LICENSE.txt</license>
-    <version>RELEASE_VERSION</version>
+    <version>VERSION</version>
     <namespace path="src">Webmasterskaya\Plugin\System\OauthServer</namespace>
     <languages folder="language">
         <language tag="en-GB">en-GB/en-GB.plg_system_oauthserver.ini</language>
