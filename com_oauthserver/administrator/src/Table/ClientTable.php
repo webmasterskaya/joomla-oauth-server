@@ -15,16 +15,16 @@ use Joomla\Database\DatabaseDriver;
 \defined('_JEXEC') or die;
 
 /**
- * @property int               $id                   ;
- * @property string            $identifier           ;
- * @property string            $name                 ;
- * @property ?string           $secret               ;
- * @property string|array|null $redirect_uris        ;
- * @property string|array|null $grants               ;
- * @property string|array|null $scopes               ;
- * @property int               $active               ;
- * @property int               $public               ;
- * @property int               $allow_plain_text_pkce;
+ * @property int          $id
+ * @property string       $identifier
+ * @property string       $name
+ * @property string|null  $secret
+ * @property string|array $redirect_uris
+ * @property string|array $grants
+ * @property string|array $scopes
+ * @property int          $active
+ * @property int          $public
+ * @property int          $allow_plain_text_pkce
  *
  * @since version
  */
