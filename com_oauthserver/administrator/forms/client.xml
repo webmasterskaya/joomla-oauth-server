@@ -12,20 +12,29 @@
 			readonly="true"
 			class="readonly"
 		/>
+		<field
+			name="active"
+			type="list"
+			label="JSTATUS"
+			class="form-select-color-state"
+			default="1"
+			validate="options"
+		>
+			<option value="1">JON</option>
+			<option value="0">JOFF</option>
+		</field>
 		<field name="name"
 			   type="text"
 			   label="COM_OAUTHSERVER_CLIENT_NAME_LABEL"
 			   required="1"
 		/>
 		<field name="public"
-			   type="radio"
-			   layout="joomla.form.field.radio.switcher"
-			   label="COM_OAUTHSERVER_CLIENT_PUBLIC_LABEL"
-			   description="COM_OAUTHSERVER_CLIENT_PUBLIC_DESCRIPTION"
+			   type="list"
+			   label="COM_OAUTHSERVER_CLIENT_TYPE_LABEL"
 			   filter="integer"
 			   default="0">
-			<option value="1">JYES</option>
-			<option value="0">JNO</option>
+			<option value="1">COM_OAUTHSERVER_CLIENT_TYPE_PUBLIC</option>
+			<option value="0">COM_OAUTHSERVER_CLIENT_TYPE_CONFIDENTIAL</option>
 		</field>
 		<field
 			name="redirect_uris"
@@ -68,5 +77,22 @@
 			   layout="components.oauthserver.field.copy.text"
 			   readonly="1"
 			   label="COM_OAUTHSERVER_CLIENT_SECRET_LABEL"/>
+	</fieldset>
+	<fieldset name="endpoints">
+		<field name="authorize_url"
+			   type="text"
+			   layout="components.oauthserver.field.copy.text"
+			   readonly="1"
+			   label="COM_OAUTHSERVER_CLIENT_AUTHORIZE_URL_LABEL"/>
+		<field name="token_url"
+			   type="text"
+			   layout="components.oauthserver.field.copy.text"
+			   readonly="1"
+			   label="COM_OAUTHSERVER_CLIENT_TOKEN_URL_LABEL"/>
+		<field name="profile_url"
+			   type="text"
+			   layout="components.oauthserver.field.copy.text"
+			   readonly="1"
+			   label="COM_OAUTHSERVER_CLIENT_PROFILE_URL_LABEL"/>
 	</fieldset>
 </form>

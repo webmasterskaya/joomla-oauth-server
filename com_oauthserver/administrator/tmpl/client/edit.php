@@ -9,6 +9,7 @@
 
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\Router\Route;
 
 defined('_JEXEC') or die;
@@ -28,23 +29,38 @@ $wa->useScript('keepalive')
       aria-label="<?php echo Text::_('COM_OAUTHSERVER_CLIENT_FORM_' . ((int) $this->item->id === 0 ? 'NEW' : 'EDIT'), true); ?>"
       class="form-validate">
 
+    <?php echo LayoutHelper::render('joomla.edit.title_alias', $this); ?>
+
     <div class="main-card">
         <?php echo HTMLHelper::_('uitab.startTabSet', 'myTab', ['active' => 'details', 'recall' => true, 'breakpoint' => 768]); ?>
 
         <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'details', Text::_('COM_OAUTHSERVER_CLIENT_DETAILS')); ?>
 
         <div class="row">
-            <div class="col-12">
-                <fieldset id="fieldset-publishingdata" class="options-form">
-                    <legend><?php echo Text::_('COM_OAUTHSERVER_CLIENT'); ?></legend>
+            <div class="col-9">
+                <fieldset id="fieldset-connections" class="options-form">
+                    <legend><?php echo Text::_('COM_OAUTHSERVER_CLIENT_CONNECTIONS_TITLE'); ?></legend>
                     <div>
-                        <?php echo $this->form->renderField('name'); ?>
-                        <?php echo $this->form->renderField('public'); ?>
-                        <?php echo $this->form->renderField('redirect_uris'); ?>
-                        <?php echo $this->form->renderField('allow_plain_text_pkce'); ?>
                         <?php echo $this->form->renderField('identifier'); ?>
                         <?php echo $this->form->renderField('secret'); ?>
+                        <?php echo $this->form->renderField('redirect_uris'); ?>
                     </div>
+                </fieldset>
+                <fieldset id="fieldset-endpoints" class="options-form">
+                    <legend><?php echo Text::_('COM_OAUTHSERVER_SERVER_CONNECTIONS_TITLE'); ?></legend>
+
+                    <div>
+                        <?php echo $this->form->renderField('authorize_url'); ?>
+                        <?php echo $this->form->renderField('token_url'); ?>
+                        <?php echo $this->form->renderField('profile_url'); ?>
+                    </div>
+                </fieldset>
+            </div>
+            <div class="col-lg-3">
+                <fieldset class="form-vertical">
+                    <legend class="visually-hidden"><?php echo Text::_('JGLOBAL_FIELDSET_GLOBAL'); ?></legend>
+                    <?php echo $this->form->renderField('active'); ?>
+                    <?php echo $this->form->renderField('public'); ?>
                 </fieldset>
             </div>
         </div>
