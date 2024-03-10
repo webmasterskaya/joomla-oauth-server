@@ -7,6 +7,7 @@
  * @license         MIT; see LICENSE.txt
  **/
 
+use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Layout\LayoutHelper;
@@ -18,8 +19,8 @@ defined('_JEXEC') or die;
  * @var \Webmasterskaya\Component\OauthServer\Administrator\View\Client\HtmlView $this
  */
 
-$wa = $this->document->getWebAssetManager();
-$wa->useScript('keepalive')
+Factory::getApplication()->getDocument()->getWebAssetManager()
+    ->useScript('keepalive')
     ->useScript('form.validate');
 
 ?>
