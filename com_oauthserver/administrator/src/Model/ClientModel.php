@@ -13,6 +13,7 @@ use Joomla\CMS\Crypt\Crypt;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\MVC\Model\AdminModel;
+use Webmasterskaya\Component\OauthServer\Administrator\Table\ClientTable;
 
 \defined('_JEXEC') or die;
 
@@ -32,7 +33,7 @@ class ClientModel extends AdminModel
      * @param   array  $data
      * @param   bool   $loadData
      *
-     * @return \Joomla\CMS\Form\Form|bool
+     * @return Form|bool
      * @throws \Exception
      * @since version
      */
@@ -79,7 +80,7 @@ class ClientModel extends AdminModel
     }
 
     /**
-     * @param   \Webmasterskaya\Component\OauthServer\Administrator\Table\ClientTable  $table
+     * @param   ClientTable  $table
      *
      * @return void
      * @throws \Exception
