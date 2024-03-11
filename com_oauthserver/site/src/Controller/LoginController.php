@@ -23,7 +23,11 @@ use League\OAuth2\Server\Grant\AuthCodeGrant;
 use League\OAuth2\Server\Grant\ClientCredentialsGrant;
 use League\OAuth2\Server\Grant\ImplicitGrant;
 use League\OAuth2\Server\Grant\RefreshTokenGrant;
-use Webmasterskaya\Component\OauthServer\Site\Entity\User as UserEntity;
+use Webmasterskaya\Component\OauthServer\Administrator\Model\AccessTokenModel;
+use Webmasterskaya\Component\OauthServer\Administrator\Model\AuthCodeModel;
+use Webmasterskaya\Component\OauthServer\Administrator\Model\ClientModel;
+use Webmasterskaya\Component\OauthServer\Administrator\Model\RefreshTokenModel;
+use Webmasterskaya\Component\OauthServer\Site\Entity\User;
 use Webmasterskaya\Component\OauthServer\Site\Repository\AccessTokenRepository;
 use Webmasterskaya\Component\OauthServer\Site\Repository\AuthCodeRepository;
 use Webmasterskaya\Component\OauthServer\Site\Repository\ClientRepository;
@@ -36,6 +40,10 @@ class LoginController extends BaseController
 {
     private AuthorizationServer $authorizationServer;
 
+    /**
+     * @throws \Exception
+     * @since version
+     */
     public function __construct($config = [], MVCFactoryInterface $factory = null, ?CMSApplication $app = null, ?Input $input = null)
     {
         parent::__construct($config, $factory, $app, $input);
@@ -57,10 +65,10 @@ class LoginController extends BaseController
 
         // Init our repositories
         /**
-         * @var \Webmasterskaya\Component\OauthServer\Administrator\Model\ClientModel       $clientModel
-         * @var \Webmasterskaya\Component\OauthServer\Administrator\Model\AccessTokenModel  $accessTokenModel
-         * @var \Webmasterskaya\Component\OauthServer\Administrator\Model\AuthCodeModel     $authCodeModel
-         * @var \Webmasterskaya\Component\OauthServer\Administrator\Model\RefreshTokenModel $refreshTokenModel
+         * @var ClientModel       $clientModel
+         * @var AccessTokenModel  $accessTokenModel
+         * @var AuthCodeModel     $authCodeModel
+         * @var RefreshTokenModel $refreshTokenModel
          */
         $clientModel      = $this->factory->createModel('Client', 'Administrator', ['request_ignore' => true]);
         $clientRepository = new ClientRepository($clientModel);
@@ -207,7 +215,7 @@ class LoginController extends BaseController
         // You will probably want to redirect the user at this point to a login endpoint.
 
         // Once the user has logged in set the user on the AuthorizationRequest
-        $authRequest->setUser(new UserEntity($user)); // an instance of UserEntityInterface
+        $authRequest->setUser(new User($user)); // an instance of UserEntityInterface
 
         // At this point you should redirect the user to an authorization page.
         // This form will ask the user to approve the client and the scopes requested.
