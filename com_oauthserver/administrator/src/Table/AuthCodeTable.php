@@ -18,9 +18,9 @@ use Joomla\Database\DatabaseDriver;
  * @property int                       $id
  * @property string                    $identifier
  * @property \DateTimeInterface|string $expiry
- * @property int|null                  $userId
+ * @property int|null                  $user_id
  * @property string|array              $scopes
- * @property int                       $clientId
+ * @property int                       $client_id
  * @property bool|int                  $revoked
  *
  * @since version
@@ -48,8 +48,5 @@ class AuthCodeTable extends Table implements RevokedTableInterface
     public function __construct(DatabaseDriver $db)
     {
         parent::__construct('#__webmasterskaya_oauthserver_authorization_codes', 'id', $db);
-
-        $this->setColumnAlias('client_id', 'clientId');
-        $this->setColumnAlias('user_id', 'userId');
     }
 }
