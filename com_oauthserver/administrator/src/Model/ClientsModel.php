@@ -28,14 +28,8 @@ class ClientsModel extends ListModel
     protected $context = 'com_oauthserver.clients';
 
     /**
-     * Constructor.
-     *
-     * @param   array                     $config   An optional associative array of configuration settings.
-     * @param   MVCFactoryInterface|null  $factory  The factory.
-     *
-     * @throws \Exception
-     *
-     * @since  1.0.0
+     * @inheritDoc
+     * @since version
      */
     public function __construct($config = [], MVCFactoryInterface $factory = null)
     {
@@ -51,14 +45,8 @@ class ClientsModel extends ListModel
     }
 
     /**
-     * Method to auto-populate the model state.
-     *
-     * @param   string  $ordering   An optional ordering field.
-     * @param   string  $direction  An optional direction (asc|desc).
-     *
-     * @throws  \Exception
-     *
-     * @since  1.0.0
+     * @inheritDoc
+     * @since version
      */
     protected function populateState($ordering = null, $direction = null): void
     {
@@ -69,13 +57,8 @@ class ClientsModel extends ListModel
     }
 
     /**
-     * Method to get a store id based on model configuration state.
-     *
-     * @param   string  $id  A prefix for the store id.
-     *
-     * @return  string  A store id.
-     *
-     * @since  1.0.0
+     * @inheritDoc
+     * @since version
      */
     protected function getStoreId($id = ''): string
     {
@@ -123,13 +106,8 @@ class ClientsModel extends ListModel
     }
 
     /**
-     * Method to get a DatabaseQuery object for retrieving the data set from a database.
-     *
-     * @return  QueryInterface  A QueryInterface object to retrieve the data set.
-     *
-     * @throws  \Exception
-     *
-     * @since  1.0.0
+     * @inheritDoc
+     * @since version
      */
     protected function getListQuery(): QueryInterface
     {
