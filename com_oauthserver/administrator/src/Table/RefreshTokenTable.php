@@ -15,11 +15,11 @@ use Joomla\Database\DatabaseDriver;
 \defined('_JEXEC') or die;
 
 /**
- * @property int                                 $id
- * @property string                              $identifier
- * @property \DateTimeImmutable|\DateTime|string $expiry
- * @property int                                 $revoked
- * @property int|null                            $access_token_id
+ * @property int                       $id
+ * @property string                    $identifier
+ * @property \DateTimeInterface|string $expiry
+ * @property int                       $revoked
+ * @property int|null                  $access_token_id
  *
  * @since version
  */
