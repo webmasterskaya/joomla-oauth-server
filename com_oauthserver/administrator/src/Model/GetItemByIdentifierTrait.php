@@ -12,53 +12,50 @@ namespace Webmasterskaya\Component\OauthServer\Administrator\Model;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Object\CMSObject;
 use Joomla\CMS\Table\Table;
+use Joomla\Registry\Registry;
 use Joomla\Utilities\ArrayHelper;
 
 \defined('_JEXEC') or die;
 
 trait GetItemByIdentifierTrait
 {
-    public function getItemByIdentifier($identifier = null): object
+    /**
+     * @param $identifier
+     *
+     * @return object|bool
+     * @throws \Exception
+     * @since version
+     */
+    public function getItemByIdentifier($identifier): object|bool
     {
-        $identifier = (!empty($identifier)) ? $identifier : (int) $this->getState($this->getName() . '.identifier');
         /** @var Table $table */
         $table = $this->getTable();
 
-        if (!empty($identifier))
-        {
-            $return = $table->load(['identifier' => $identifier]);
+        $return = $table->load(['identifier' => $identifier]);
 
-            if ($return === false)
-            {
-                if (method_exists($table, 'getError') && $table->getError())
-                {
-                    throw new \RuntimeException($table->getError());
-                }
-                throw new \RuntimeException(Text::_('JLIB_APPLICATION_ERROR_NOT_EXIST'));
+        if ($return === false)
+        {
+            // If there was no underlying error, then the false means there simply was not a row in the db for this $pk.
+            if (!$table->getError()) {
+                $this->setError(Text::_('JLIB_APPLICATION_ERROR_NOT_EXIST'));
+            } else {
+                $this->setError($table->getError());
             }
+
+            return false;
         }
 
         // Convert to the CMSObject before adding other data.
-        $properties     = $table->getProperties(true);
-        $all_properties = $table->getProperties(false);
+        $properties = $table->getProperties(1);
+        $item       = ArrayHelper::toObject($properties, CMSObject::class);
 
-        if (!empty($all_properties['_jsonEncode']))
-        {
-            foreach ($all_properties['_jsonEncode'] as $prop)
-            {
-                if (array_key_exists($prop, $properties) && is_string($properties[$prop]))
-                {
-                    $properties[$prop] = json_decode($properties[$prop]);
-                }
-            }
+        if (property_exists($item, 'params')) {
+            $registry     = new Registry($item->params);
+            $item->params = $registry->toArray();
         }
 
-        return ArrayHelper::toObject($properties, CMSObject::class, true);
+        return $item;
     }
-
-    abstract public function getState($property = null, $default = null);
-
-    abstract public function getName();
 
     abstract public function getTable($name = '', $prefix = '', $options = []);
 }
