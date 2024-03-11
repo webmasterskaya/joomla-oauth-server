@@ -85,6 +85,44 @@ class ClientsModel extends ListModel
     }
 
     /**
+     * @inheritDoc
+     * @since version
+     */
+    public function getItems()
+    {
+        $result = parent::getItems();
+
+        if (!$result)
+        {
+            return $result;
+        }
+
+        // Get a storage key.
+        $store = $this->getStoreId();
+
+        /** @var \stdClass $row */
+        foreach ($result as &$row)
+        {
+            // Convert `public` field to bool
+            $row->public = !empty($row->public);
+
+            if (!empty($row->scopes))
+            {
+                $row->scopes = json_decode($row->scopes, true);
+            }
+
+            if (!empty($row->grants))
+            {
+                $row->grants = json_decode($row->grants, true);
+            }
+        }
+
+        $this->cache[$store] = $result;
+
+        return $this->cache[$store];
+    }
+
+    /**
      * Method to get a DatabaseQuery object for retrieving the data set from a database.
      *
      * @return  QueryInterface  A QueryInterface object to retrieve the data set.
