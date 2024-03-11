@@ -56,5 +56,7 @@ class ClientTable extends Table
     public function __construct(DatabaseDriver $db)
     {
         parent::__construct('#__webmasterskaya_oauthserver_clients', 'id', $db);
+
+        $this->setColumnAlias('published', 'active');
     }
 }
