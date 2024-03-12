@@ -25,8 +25,8 @@ class AuthCodeRepository implements AuthCodeRepositoryInterface
     private ClientModel $clientModel;
 
     /**
-     * @param   \Webmasterskaya\Component\OauthServer\Administrator\Model\AuthCodeModel  $authCodeModel
-     * @param   \Webmasterskaya\Component\OauthServer\Administrator\Model\ClientModel    $clientModel
+     * @param   AuthCodeModel  $authCodeModel
+     * @param   ClientModel    $clientModel
      *
      * @since version
      */
