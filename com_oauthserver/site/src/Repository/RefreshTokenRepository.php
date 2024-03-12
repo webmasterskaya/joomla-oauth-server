@@ -43,30 +43,31 @@ class RefreshTokenRepository implements RefreshTokenRepositoryInterface
         return new RefreshToken();
     }
 
-    public function persistNewRefreshToken(RefreshTokenEntityInterface $refreshTokenEntity)
+    /**
+     * @param   RefreshTokenEntityInterface  $refreshTokenEntity
+     *
+     * @return void
+     * @throws UniqueTokenIdentifierConstraintViolationException
+     * @throws \Exception
+     * @since version
+     */
+    public function persistNewRefreshToken(RefreshTokenEntityInterface $refreshTokenEntity): void
     {
-        $found = false;
-        try
-        {
-            $refreshToken = $this->refreshTokenModel->getItemByIdentifier($refreshTokenEntity->getIdentifier());
+        $refreshToken = $this->refreshTokenModel->getItemByIdentifier($refreshTokenEntity->getIdentifier());
 
-            if ($refreshToken->id > 0)
-            {
-                $found = true;
-            }
-        }
-        catch (\Exception $e)
-        {
-        }
-
-        if ($found)
+        if ($refreshToken !== false)
         {
             throw UniqueTokenIdentifierConstraintViolationException::create();
         }
 
         $data = $refreshTokenEntity->getData();
 
-        $accessToken = $this->accessTokenModel->getItemByIdentifier($refreshTokenEntity->getAccessToken()->getIdentifier());
+        $accessToken = $this->accessTokenModel->getItemByIdentifier($data['access_token_identifier']);
+
+        if ($accessToken === false)
+        {
+            throw new \RuntimeException($this->accessTokenModel->getError());
+        }
 
         unset($data['access_token_identifier']);
         $data['access_token_id'] = $accessToken->id;
@@ -79,15 +80,22 @@ class RefreshTokenRepository implements RefreshTokenRepositoryInterface
         $this->refreshTokenModel->revoke($tokenId);
     }
 
+    /**
+     * @param   string  $tokenId
+     *
+     * @throws \Exception
+     * @since version
+     * @noinspection PhpPossiblePolymorphicInvocationInspection
+     */
     public function isRefreshTokenRevoked($tokenId): bool
     {
         $refreshToken = $this->refreshTokenModel->getItemByIdentifier($tokenId);
 
-        if (empty($refreshToken->id))
+        if ($refreshToken === false)
         {
             return true;
         }
 
-        return !!$refreshToken->revoked;
+        return (bool) $refreshToken->revoked;
     }
 }
