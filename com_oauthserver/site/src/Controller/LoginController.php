@@ -11,6 +11,8 @@ namespace Webmasterskaya\Component\OauthServer\Site\Controller;
 
 use Joomla\CMS\Application\CMSApplication;
 use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Document\FactoryInterface;
+use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\CMS\Router\Route;
@@ -19,6 +21,7 @@ use Joomla\Input\Input;
 use Laminas\Diactoros\ServerRequestFactory;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\CryptKey;
+use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\AuthCodeGrant;
 use League\OAuth2\Server\Grant\ClientCredentialsGrant;
 use League\OAuth2\Server\Grant\ImplicitGrant;
@@ -176,11 +179,11 @@ class LoginController extends BaseController
     }
 
     /**
-     * @return void
-     * @throws \Exception
+     * @return LoginController
+     * @throws OAuthServerException
      * @since version
      */
-    public function authorize(): void
+    public function authorize(): static
     {
         $app  = $this->app;
         $user = $app->getIdentity();
@@ -225,20 +228,25 @@ class LoginController extends BaseController
         $authRequest->setAuthorizationApproved(true);
 
         $app->setResponse($server->completeAuthorizationRequest($authRequest, $serverResponse));
+
+        echo $this->app->getResponse()->getBody();
+
+        return $this;
     }
 
     /**
-     * @return void
+     * @return LoginController
      * @throws \Exception
      * @since version
      */
-    public function token(): void
+    public function token(): static
     {
         $server         = $this->authorizationServer;
         $serverRequest  = ServerRequestFactory::fromGlobals();
         $serverResponse = $this->app->getResponse();
         $this->app->setResponse($server->respondToAccessTokenRequest($serverRequest, $serverResponse));
-        $this->app->getInput()->set('format', 'json');
-        //TODO: WTF!??!?! Какого хрена оно отдаёт простой HTML?
+        echo $this->app->getResponse()->getBody();
+
+        return $this;
     }
 }
