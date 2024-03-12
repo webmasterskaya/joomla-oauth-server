@@ -22,14 +22,9 @@ use Webmasterskaya\Component\OauthServer\Site\Entity\AccessToken;
 class AccessTokenRepository implements AccessTokenRepositoryInterface
 {
     private AccessTokenModel $accessTokenModel;
+
     private ClientModel $clientModel;
 
-    /**
-     * @param   AccessTokenModel  $accessTokenModel
-     * @param   ClientModel       $clientModel
-     *
-     * @since version
-     */
     public function __construct(AccessTokenModel $accessTokenModel, ClientModel $clientModel)
     {
         $this->accessTokenModel = $accessTokenModel;
@@ -50,31 +45,31 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
         return $accessToken;
     }
 
+    /**
+     * @param   AccessToken  $accessTokenEntity
+     *
+     * @return void
+     * @throws UniqueTokenIdentifierConstraintViolationException
+     * @throws \Exception
+     * @since version
+     */
     public function persistNewAccessToken(AccessTokenEntityInterface $accessTokenEntity): void
     {
-        $found = false;
-        try
-        {
-            /** @var AccessToken $accessTokenEntity */
-            $accessToken = $this->accessTokenModel->getItemByIdentifier($accessTokenEntity->getIdentifier());
-            if ($accessToken->id > 0)
-            {
-                $found = true;
-            }
-        }
-        catch (\Throwable $e)
-        {
-        }
+        $accessToken = $this->accessTokenModel->getItemByIdentifier($accessTokenEntity->getIdentifier());
 
-        if ($found)
+        if ($accessToken !== false)
         {
             throw UniqueTokenIdentifierConstraintViolationException::create();
         }
 
-        /** @var AccessToken $accessTokenEntity */
         $data = $accessTokenEntity->getData();
 
-        $client = $this->clientModel->getItemByIdentifier($accessTokenEntity->getClient()->getIdentifier());
+        $client = $this->clientModel->getItemByIdentifier($data['client_identifier']);
+
+        if ($client === false)
+        {
+            throw new \RuntimeException($this->clientModel->getError());
+        }
 
         $data['client_id'] = $client->id;
         unset($data['client_identifier']);
@@ -87,15 +82,22 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
         $this->accessTokenModel->revoke($tokenId);
     }
 
+    /**
+     * @param   string  $tokenId
+     *
+     * @throws \Exception
+     * @since version
+     * @noinspection PhpPossiblePolymorphicInvocationInspection
+     */
     public function isAccessTokenRevoked($tokenId): bool
     {
         $accessToken = $this->accessTokenModel->getItemByIdentifier($tokenId);
 
-        if (!$accessToken->id)
+        if ($accessToken === false)
         {
             return true;
         }
 
-        return !!$accessToken->revoked;
+        return (bool) $accessToken->revoked;
     }
 }
