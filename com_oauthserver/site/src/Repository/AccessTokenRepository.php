@@ -74,7 +74,10 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
         $data['client_id'] = $client->id;
         unset($data['client_identifier']);
 
-        $this->accessTokenModel->save($data);
+        if (!$this->accessTokenModel->save($data))
+        {
+            throw new \RuntimeException($this->accessTokenModel->getError());
+        }
     }
 
     public function revokeAccessToken($tokenId): void
@@ -86,7 +89,7 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
      * @param   string  $tokenId
      *
      * @throws \Exception
-     * @since version
+     * @since        version
      * @noinspection PhpPossiblePolymorphicInvocationInspection
      */
     public function isAccessTokenRevoked($tokenId): bool

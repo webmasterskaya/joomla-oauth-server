@@ -72,7 +72,10 @@ class RefreshTokenRepository implements RefreshTokenRepositoryInterface
         unset($data['access_token_identifier']);
         $data['access_token_id'] = $accessToken->id;
 
-        $this->refreshTokenModel->save($data);
+        if (!$this->refreshTokenModel->save($data))
+        {
+            throw new \RuntimeException($this->refreshTokenModel->getError());
+        }
     }
 
     public function revokeRefreshToken($tokenId): void
@@ -84,7 +87,7 @@ class RefreshTokenRepository implements RefreshTokenRepositoryInterface
      * @param   string  $tokenId
      *
      * @throws \Exception
-     * @since version
+     * @since        version
      * @noinspection PhpPossiblePolymorphicInvocationInspection
      */
     public function isRefreshTokenRevoked($tokenId): bool

@@ -70,7 +70,10 @@ class AuthCodeRepository implements AuthCodeRepositoryInterface
         $data['client_id'] = $client->id;
         unset($data['client_identifier']);
 
-        $this->authCodeModel->save($data);
+        if (!$this->authCodeModel->save($data))
+        {
+            throw new \RuntimeException($this->authCodeModel->getError());
+        }
     }
 
     public function revokeAuthCode($codeId): void
@@ -82,7 +85,7 @@ class AuthCodeRepository implements AuthCodeRepositoryInterface
      * @param   string  $codeId
      *
      * @throws \Exception
-     * @since version
+     * @since        version
      * @noinspection PhpPossiblePolymorphicInvocationInspection
      */
     public function isAuthCodeRevoked($codeId): bool
