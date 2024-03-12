@@ -26,8 +26,8 @@ class RefreshTokenRepository implements RefreshTokenRepositoryInterface
     private AccessTokenModel $accessTokenModel;
 
     /**
-     * @param   \Webmasterskaya\Component\OauthServer\Administrator\Model\RefreshTokenModel  $refreshTokenModel
-     * @param   \Webmasterskaya\Component\OauthServer\Administrator\Model\AccessTokenModel   $accessTokenModel
+     * @param   RefreshTokenModel  $refreshTokenModel
+     * @param   AccessTokenModel   $accessTokenModel
      *
      * @since version
      */
