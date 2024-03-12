@@ -24,11 +24,13 @@ class AccessToken implements AccessTokenEntityInterface
 
     public function getData(): array
     {
+        $scopes = array_map(fn($scope) => ['scope' => (string) $scope], $this->getScopes());
+
         return [
             'identifier'        => $this->getIdentifier(),
             'expiry'            => $this->getExpiryDateTime(),
             'user_id'           => $this->getUserIdentifier(),
-            'scopes'            => $this->getScopes(),
+            'scopes'            => $scopes,
             'client_identifier' => $this->getClient()->getIdentifier()
         ];
     }
