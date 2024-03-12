@@ -28,9 +28,9 @@ class ClientRepository implements ClientRepositoryInterface
     }
 
     /**
-     * @param $clientIdentifier
+     * @param   string  $clientIdentifier
      *
-     * @return \League\OAuth2\Server\Entities\ClientEntityInterface|null
+     * @return ClientEntityInterface|null
      * @throws \Exception
      * @since version
      */
@@ -38,34 +38,37 @@ class ClientRepository implements ClientRepositoryInterface
     {
         $item = $this->clientModel->getItemByIdentifier($clientIdentifier);
 
-        if (empty($item->id))
+        if ($item === false)
         {
             return null;
         }
 
-        return $this->buildClientEntity($item);
+        return $this->bind($item);
     }
 
+    /**
+     * @param $clientIdentifier
+     * @param $clientSecret
+     * @param $grantType
+     *
+     * @return bool
+     * @throws \Exception
+     * @since        version
+     * @noinspection PhpPossiblePolymorphicInvocationInspection
+     */
     public function validateClient($clientIdentifier, $clientSecret, $grantType): bool
     {
         $item = $this->clientModel->getItemByIdentifier($clientIdentifier);
 
-        if (empty($item->id))
+        if ($item === false
+            || !$item->active
+            || !$this->isGrantSupported($item, $grantType))
         {
             return false;
         }
 
-        if (!$item->active)
-        {
-            return false;
-        }
-
-        if (!$this->isGrantSupported($item, $grantType))
-        {
-            return false;
-        }
-
-        if (!!$item->public || hash_equals((string) $item->secret, (string) $clientSecret))
+        if (!!$item->public
+            || hash_equals((string) $item->secret, (string) $clientSecret))
         {
             return true;
         }
@@ -73,26 +76,46 @@ class ClientRepository implements ClientRepositoryInterface
         return false;
     }
 
-    private function buildClientEntity(\stdClass|CMSObject $client): Client
+    /** @noinspection PhpPossiblePolymorphicInvocationInspection */
+    private function bind(CMSObject $client): Client
     {
         $clientEntity = new Client();
         $clientEntity->setName($client->name);
         $clientEntity->setIdentifier($client->identifier);
-        $clientEntity->setRedirectUri(ArrayHelper::getColumn((array) $client->redirect_uris, 'uri'));
+
+        if (!empty($client->redirect_uris))
+        {
+            $redirect_uris = json_decode($client->redirect_uris, true, 3, JSON_OBJECT_AS_ARRAY);
+            $redirect_uris = ArrayHelper::getColumn($redirect_uris, 'uri');
+        }
+        else
+        {
+            $redirect_uris = [];
+        }
+        $clientEntity->setRedirectUri($redirect_uris);
+
         $clientEntity->setConfidential(!$client->public);
-        $clientEntity->setAllowPlainTextPkce((bool) $client->allow_plain_text_pkce);
+        $clientEntity->setAllowPlainTextPkce(!!$client->allow_plain_text_pkce);
 
         return $clientEntity;
     }
 
-    private function isGrantSupported(\stdClass|CMSObject $client, ?string $grant): bool
+    private function isGrantSupported(CMSObject $client, ?string $grant): bool
     {
         if (null === $grant)
         {
             return true;
         }
 
-        $grants = array_map('strval', (array) $client->grants);
+        if (!empty($client->grants))
+        {
+            $grants = json_decode($client->grants, true, 3, JSON_OBJECT_AS_ARRAY);
+            $grants = ArrayHelper::getColumn($grants, 'grant');
+        }
+        else
+        {
+            $grants = [];
+        }
 
         if (empty($grants))
         {
