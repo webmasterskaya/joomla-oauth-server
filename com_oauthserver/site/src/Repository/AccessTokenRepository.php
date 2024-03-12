@@ -25,8 +25,8 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
     private ClientModel $clientModel;
 
     /**
-     * @param   \Webmasterskaya\Component\OauthServer\Administrator\Model\AccessTokenModel  $accessTokenModel
-     * @param   \Webmasterskaya\Component\OauthServer\Administrator\Model\ClientModel       $clientModel
+     * @param   AccessTokenModel  $accessTokenModel
+     * @param   ClientModel       $clientModel
      *
      * @since version
      */
