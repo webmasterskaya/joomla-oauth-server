@@ -103,7 +103,7 @@ class ClientModel extends AdminModel
     {
         $app = Factory::getApplication();
 
-        if ($table->id > 0)
+        if (empty($table->id))
         {
             $table->identifier = $this->generateNewIdentifier();
         }
