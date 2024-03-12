@@ -13,11 +13,16 @@ use Joomla\CMS\Crypt\Crypt;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\MVC\Model\AdminModel;
+use Joomla\CMS\Object\CMSObject;
 use Joomla\CMS\Uri\Uri;
 use Webmasterskaya\Component\OauthServer\Administrator\Table\ClientTable;
 
 \defined('_JEXEC') or die;
 
+/**
+ * @method CMSObject|bool getItem($pk = null)
+ * @since version
+ */
 class ClientModel extends AdminModel
 {
     use GetItemByIdentifierTrait;
