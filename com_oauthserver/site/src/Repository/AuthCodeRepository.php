@@ -41,31 +41,31 @@ class AuthCodeRepository implements AuthCodeRepositoryInterface
         return new AuthCode();
     }
 
-    public function persistNewAuthCode(AuthCodeEntityInterface $authCodeEntity)
+    /**
+     * @param   AuthCodeEntityInterface  $authCodeEntity
+     *
+     * @return void
+     * @throws UniqueTokenIdentifierConstraintViolationException
+     * @throws \Exception
+     * @since version
+     */
+    public function persistNewAuthCode(AuthCodeEntityInterface $authCodeEntity): void
     {
-        $found = false;
-        try
-        {
-            $authCode = $this->authCodeModel->getItemByIdentifier($authCodeEntity->getIdentifier());
+        $authCode = $this->authCodeModel->getItemByIdentifier($authCodeEntity->getIdentifier());
 
-            if ($authCode->id > 0)
-            {
-                $found = true;
-
-            }
-        }
-        catch (\Throwable $e)
-        {
-        }
-
-        if ($found)
+        if ($authCode !== false)
         {
             throw UniqueTokenIdentifierConstraintViolationException::create();
         }
 
         $data = $authCodeEntity->getData();
 
-        $client = $this->clientModel->getItemByIdentifier($authCodeEntity->getClient()->getIdentifier());
+        $client = $this->clientModel->getItemByIdentifier($data['client_identifier']);
+
+        if ($client === false)
+        {
+            throw new \RuntimeException($this->clientModel->getError());
+        }
 
         $data['client_id'] = $client->id;
         unset($data['client_identifier']);
@@ -73,20 +73,27 @@ class AuthCodeRepository implements AuthCodeRepositoryInterface
         $this->authCodeModel->save($data);
     }
 
-    public function revokeAuthCode($codeId)
+    public function revokeAuthCode($codeId): void
     {
         $this->authCodeModel->revoke($codeId);
     }
 
-    public function isAuthCodeRevoked($codeId)
+    /**
+     * @param   string  $codeId
+     *
+     * @throws \Exception
+     * @since version
+     * @noinspection PhpPossiblePolymorphicInvocationInspection
+     */
+    public function isAuthCodeRevoked($codeId): bool
     {
         $authCode = $this->authCodeModel->getItemByIdentifier($codeId);
 
-        if (empty($authCode->id))
+        if ($authCode === false)
         {
             return true;
         }
 
-        return !!$authCode->revoked;
+        return (bool) $authCode->revoked;
     }
 }
