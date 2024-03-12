@@ -11,13 +11,12 @@ namespace Webmasterskaya\Component\OauthServer\Site\Controller;
 
 use Joomla\CMS\Application\CMSApplication;
 use Joomla\CMS\Component\ComponentHelper;
-use Joomla\CMS\Document\FactoryInterface;
-use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
 use Joomla\Input\Input;
+use Laminas\Diactoros\ServerRequest;
 use Laminas\Diactoros\ServerRequestFactory;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\CryptKey;
@@ -185,31 +184,47 @@ class LoginController extends BaseController
      */
     public function authorize(): static
     {
-        $app  = $this->app;
-        $user = $app->getIdentity();
-        $uri  = Uri::getInstance();
+        $app           = $this->app;
+        $input         = $app->getInput();
+        $user          = $app->getIdentity();
+        $uri           = Uri::getInstance();
+        $state_prefix  = 'oauthserver.login.authorize.request';
+
+        // Create PSR-7 Request object and store all query params in user state, to use it after user login is it required.
+        $serverRequest = (new ServerRequest([], [], $app->getUserState("$state_prefix.uri", (string) $uri)))
+            ->withQueryParams([
+                'response_type'         => $app->getUserStateFromRequest("$state_prefix.response_type", 'response_type'),
+                'client_id'             => $app->getUserStateFromRequest("$state_prefix.client_id", 'client_id', $input->server->get('PHP_AUTH_USER')),
+                'redirect_uri'          => $app->getUserStateFromRequest("$state_prefix.redirect_uri", 'redirect_uri'),
+                'scope'                 => $app->getUserStateFromRequest("$state_prefix.scope", 'scope'),
+                'code_challenge'        => $app->getUserStateFromRequest("$state_prefix.code_challenge", 'code_challenge'),
+                'code_challenge_method' => $app->getUserStateFromRequest("$state_prefix.code_challenge_method", 'code_challenge_method', 'plain'),
+            ]);
 
         if (!$user->id)
         {
-            $return = http_build_query(['return' => base64_encode($uri->toString(['scheme', 'user', 'pass', 'host', 'port', 'path']))]);
-            $this->app->setUserState('oauthserver.login.authorize.request', $uri->getQuery(true));
-            $this->app->enqueueMessage('Необходимо авторизоваться!');
-            $this->app->redirect(Route::_('index.php?option=com_users&view=login&' . $return));
-        }
-
-        $state_request = $this->app->getUserState('oauthserver.login.authorize.request');
-        if (!empty($state_request) && empty($uri->getQuery(true)))
-        {
-            foreach ($state_request as $k => $v)
+            if ($app->getUserState("$state_prefix.uri") === null)
             {
-                $uri->setVar($k, $v);
+                $app->setUserState("$state_prefix.uri", (string) $uri);
             }
-        }
-        $this->app->setUserState('oauthserver.login.authorize.request', []);
 
-        $server         = $this->authorizationServer;
-        $serverRequest  = ServerRequestFactory::fromGlobals();
-        $serverResponse = $app->getResponse();
+            // Build the cleared current uri and encode to pass it to the login form as a callback uri.
+            $return   = http_build_query(['return' => base64_encode($uri->toString(['scheme', 'user', 'pass', 'host', 'port', 'path']))]);
+            $redirect = Route::_('index.php?option=com_users&view=login&' . $return);
+
+            // The current page is not tied to any menu item, so the main page item id will be added to the route. It needs to be removed.
+            $redirect = preg_replace('/((&|&amp;)itemid=\d+)/i', '', $redirect);
+
+            $app->enqueueMessage('Необходимо авторизоваться!');
+            $app->redirect($redirect);
+
+            return $this;
+        }
+
+        // Clean user state after login checks
+        $app->setUserState($state_prefix, null);
+
+        $server = $this->authorizationServer;
 
         // Validate the HTTP request and return an AuthorizationRequest object.
         $authRequest = $server->validateAuthorizationRequest($serverRequest);
@@ -227,9 +242,7 @@ class LoginController extends BaseController
         // (true = approved, false = denied)
         $authRequest->setAuthorizationApproved(true);
 
-        $app->setResponse($server->completeAuthorizationRequest($authRequest, $serverResponse));
-
-        echo $this->app->getResponse()->getBody();
+        $app->setResponse($server->completeAuthorizationRequest($authRequest, $app->getResponse()));
 
         return $this;
     }
