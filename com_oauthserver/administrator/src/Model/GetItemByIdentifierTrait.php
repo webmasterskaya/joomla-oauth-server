@@ -22,7 +22,7 @@ trait GetItemByIdentifierTrait
     /**
      * @param $identifier
      *
-     * @return object|bool
+     * @return CMSObject|bool
      * @throws \Exception
      * @since version
      */
@@ -36,9 +36,12 @@ trait GetItemByIdentifierTrait
         if ($return === false)
         {
             // If there was no underlying error, then the false means there simply was not a row in the db for this $pk.
-            if (!$table->getError()) {
+            if (!$table->getError())
+            {
                 $this->setError(Text::_('JLIB_APPLICATION_ERROR_NOT_EXIST'));
-            } else {
+            }
+            else
+            {
                 $this->setError($table->getError());
             }
 
@@ -49,7 +52,8 @@ trait GetItemByIdentifierTrait
         $properties = $table->getProperties(1);
         $item       = ArrayHelper::toObject($properties, CMSObject::class);
 
-        if (property_exists($item, 'params')) {
+        if (property_exists($item, 'params'))
+        {
             $registry     = new Registry($item->params);
             $item->params = $registry->toArray();
         }
