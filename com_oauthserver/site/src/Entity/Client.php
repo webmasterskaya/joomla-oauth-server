@@ -22,8 +22,9 @@ class Client implements ClientEntityInterface
 
     /**
      * @var bool
+     * @since version
      */
-    private $allowPlainTextPkce = true;
+    private bool $allowPlainTextPkce = true;
 
     public function setName(string $name): void
     {
@@ -32,6 +33,7 @@ class Client implements ClientEntityInterface
 
     /**
      * @param   string[]  $redirectUri
+     * @since version
      */
     public function setRedirectUri(array $redirectUri): void
     {
