@@ -25,6 +25,7 @@ use League\OAuth2\Server\Grant\AuthCodeGrant;
 use League\OAuth2\Server\Grant\ClientCredentialsGrant;
 use League\OAuth2\Server\Grant\ImplicitGrant;
 use League\OAuth2\Server\Grant\RefreshTokenGrant;
+use League\OAuth2\Server\RequestEvent;
 use Webmasterskaya\Component\OauthServer\Administrator\Model\AccessTokenModel;
 use Webmasterskaya\Component\OauthServer\Administrator\Model\AuthCodeModel;
 use Webmasterskaya\Component\OauthServer\Administrator\Model\ClientModel;
@@ -159,6 +160,34 @@ class LoginController extends BaseController
             );
         }
 
+        $server->getEmitter()
+            ->addListener(
+                RequestEvent::USER_AUTHENTICATION_FAILED,
+                function (RequestEvent $event) {
+                    // TODO:: Dispatch event with Joomla EventDispatcher by name `onUserAuthenticationFailed`
+                }
+            )->addListener(
+                RequestEvent::CLIENT_AUTHENTICATION_FAILED,
+                function (RequestEvent $event) {
+                    // TODO:: Dispatch event with Joomla EventDispatcher by name `onClientAuthenticationFailed`
+                }
+            )->addListener(
+                RequestEvent::REFRESH_TOKEN_CLIENT_FAILED,
+                function (RequestEvent $event) {
+                    // TODO:: Dispatch event with Joomla EventDispatcher by name `onRefreshTokenClientFailed`
+                }
+            )->addListener(
+                RequestEvent::REFRESH_TOKEN_ISSUED,
+                function (RequestEvent $event) {
+                    // TODO:: Dispatch event with Joomla EventDispatcher by name `onRefreshTokenIssued`
+                }
+            )->addListener(
+                RequestEvent::ACCESS_TOKEN_ISSUED,
+                function (RequestEvent $event) {
+                    // TODO:: Dispatch event with Joomla EventDispatcher by name `onAccessTokenIssued`
+                }
+            );
+
         $this->authorizationServer = $server;
     }
 
@@ -169,11 +198,11 @@ class LoginController extends BaseController
      */
     public function authorize(): static
     {
-        $app           = $this->app;
-        $input         = $app->getInput();
-        $user          = $app->getIdentity();
-        $uri           = Uri::getInstance();
-        $state_prefix  = 'oauthserver.login.authorize.request';
+        $app          = $this->app;
+        $input        = $app->getInput();
+        $user         = $app->getIdentity();
+        $uri          = Uri::getInstance();
+        $state_prefix = 'oauthserver.login.authorize.request';
 
         // Create PSR-7 Request object and store all query params in user state, to use it after user login is it required.
         $serverRequest = (new ServerRequest([], [], $app->getUserState("$state_prefix.uri", (string) $uri)))
