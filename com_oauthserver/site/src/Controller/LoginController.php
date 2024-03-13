@@ -89,21 +89,6 @@ class LoginController extends BaseController
 
         $params = ComponentHelper::getParams('com_oauthserver');
 
-        //TODO: Этот код нужно вынести в отдельный хелпер, для генерации закрытого и открытого ключей
-        if (false)
-        {
-            /** @noinspection PhpUnreachableStatementInspection */
-            $key = openssl_pkey_new([
-                "digest_alg"       => "sha512",
-                "private_key_bits" => 4096,
-                "private_key_type" => OPENSSL_KEYTYPE_RSA,
-            ]);
-            openssl_pkey_export($key, $private_key);
-            // Extract the public key from $res to $pubKey
-            $pub = openssl_pkey_get_details($key);
-            $pub = $pub["key"];
-        }
-
         if ($params->get('key_method_paste'))
         {
             $private_key = $params->get('private_key_raw');
