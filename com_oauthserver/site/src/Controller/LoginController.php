@@ -25,7 +25,10 @@ use League\OAuth2\Server\Grant\AuthCodeGrant;
 use League\OAuth2\Server\Grant\ClientCredentialsGrant;
 use League\OAuth2\Server\Grant\ImplicitGrant;
 use League\OAuth2\Server\Grant\RefreshTokenGrant;
-use League\OAuth2\Server\RequestEvent;
+use League\OAuth2\Server\RequestEvent as LeagueRequestEvent;
+use Webmasterskaya\Component\OauthServer\Administrator\Event\RequestAccessTokenEvent;
+use Webmasterskaya\Component\OauthServer\Administrator\Event\RequestEvent;
+use Webmasterskaya\Component\OauthServer\Administrator\Event\RequestRefreshTokenEvent;
 use Webmasterskaya\Component\OauthServer\Administrator\Event\TokenRequestResolveEvent;
 use Webmasterskaya\Component\OauthServer\Administrator\Model\AccessTokenModel;
 use Webmasterskaya\Component\OauthServer\Administrator\Model\AuthCodeModel;
@@ -163,29 +166,57 @@ class LoginController extends BaseController
 
         $server->getEmitter()
             ->addListener(
-                RequestEvent::USER_AUTHENTICATION_FAILED,
-                function (RequestEvent $event) {
-                    // TODO:: Dispatch event with Joomla EventDispatcher by name `onUserAuthenticationFailed`
+                LeagueRequestEvent::USER_AUTHENTICATION_FAILED,
+                function (LeagueRequestEvent $event) {
+                    $name = 'onUserAuthenticationFailed';
+                    $this->getDispatcher()->dispatch($name, new RequestEvent(
+                        $name,
+                        ['request' => $event->getRequest()]
+                    ));
                 }
             )->addListener(
-                RequestEvent::CLIENT_AUTHENTICATION_FAILED,
-                function (RequestEvent $event) {
-                    // TODO:: Dispatch event with Joomla EventDispatcher by name `onClientAuthenticationFailed`
+                LeagueRequestEvent::CLIENT_AUTHENTICATION_FAILED,
+                function (LeagueRequestEvent $event) {
+                    $name = 'onClientAuthenticationFailed';
+                    $this->getDispatcher()->dispatch($name, new RequestEvent(
+                        $name,
+                        ['request' => $event->getRequest()]
+                    ));
                 }
             )->addListener(
-                RequestEvent::REFRESH_TOKEN_CLIENT_FAILED,
-                function (RequestEvent $event) {
-                    // TODO:: Dispatch event with Joomla EventDispatcher by name `onRefreshTokenClientFailed`
+                LeagueRequestEvent::REFRESH_TOKEN_CLIENT_FAILED,
+                function (LeagueRequestEvent $event) {
+                    $name = 'onRefreshTokenClientFailed';
+                    $this->getDispatcher()->dispatch($name, new RequestEvent(
+                        $name,
+                        ['request' => $event->getRequest()]
+                    ));
                 }
             )->addListener(
-                RequestEvent::REFRESH_TOKEN_ISSUED,
-                function (RequestEvent $event) {
-                    // TODO:: Dispatch event with Joomla EventDispatcher by name `onRefreshTokenIssued`
+                LeagueRequestEvent::REFRESH_TOKEN_ISSUED,
+                function (LeagueRequestEvent $event) {
+                    /** @var \League\OAuth2\Server\RequestRefreshTokenEvent $event */
+                    $name = 'onRefreshTokenIssued';
+                    $this->getDispatcher()->dispatch($name, new RequestRefreshTokenEvent(
+                        $name,
+                        [
+                            'request'      => $event->getRequest(),
+                            'refreshToken' => $event->getRefreshToken()
+                        ]
+                    ));
                 }
             )->addListener(
-                RequestEvent::ACCESS_TOKEN_ISSUED,
-                function (RequestEvent $event) {
-                    // TODO:: Dispatch event with Joomla EventDispatcher by name `onAccessTokenIssued`
+                LeagueRequestEvent::ACCESS_TOKEN_ISSUED,
+                function (LeagueRequestEvent $event) {
+                    /** @var \League\OAuth2\Server\RequestAccessTokenEvent $event */
+                    $name = 'onAccessTokenIssued';
+                    $this->getDispatcher()->dispatch($name, new RequestAccessTokenEvent(
+                        $name,
+                        [
+                            'request'     => $event->getRequest(),
+                            'accessToken' => $event->getAccessToken()
+                        ]
+                    ));
                 }
             );
 
