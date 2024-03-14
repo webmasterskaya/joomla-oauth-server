@@ -26,6 +26,7 @@ use League\OAuth2\Server\Grant\ClientCredentialsGrant;
 use League\OAuth2\Server\Grant\ImplicitGrant;
 use League\OAuth2\Server\Grant\RefreshTokenGrant;
 use League\OAuth2\Server\RequestEvent;
+use Webmasterskaya\Component\OauthServer\Administrator\Event\TokenRequestResolveEvent;
 use Webmasterskaya\Component\OauthServer\Administrator\Model\AccessTokenModel;
 use Webmasterskaya\Component\OauthServer\Administrator\Model\AuthCodeModel;
 use Webmasterskaya\Component\OauthServer\Administrator\Model\ClientModel;
@@ -268,10 +269,15 @@ class LoginController extends BaseController
      */
     public function token(): static
     {
-        $server         = $this->authorizationServer;
-        $serverRequest  = ServerRequestFactory::fromGlobals();
-        $serverResponse = $this->app->getResponse();
-        $this->app->setResponse($server->respondToAccessTokenRequest($serverRequest, $serverResponse));
+        $server        = $this->authorizationServer;
+        $serverRequest = ServerRequestFactory::fromGlobals();
+        $response      = $this->app->getResponse();
+        $response      = $server->respondToAccessTokenRequest($serverRequest, $response);
+        $event         = new TokenRequestResolveEvent('onTokenRequestResolve', ['response' => $response]);
+
+        $this->getDispatcher()->dispatch($event->getName(), $event);
+        $this->app->setResponse($event->getArgument('response'));
+
         echo $this->app->getResponse()->getBody();
 
         return $this;
