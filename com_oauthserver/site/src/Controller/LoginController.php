@@ -168,7 +168,7 @@ class LoginController extends BaseController
             ->addListener(
                 LeagueRequestEvent::USER_AUTHENTICATION_FAILED,
                 function (LeagueRequestEvent $event) {
-                    $name = 'onUserAuthenticationFailed';
+                    $name = 'onOauthUserAuthenticationFailed';
                     $this->getDispatcher()->dispatch($name, new RequestEvent(
                         $name,
                         ['request' => $event->getRequest()]
@@ -177,7 +177,7 @@ class LoginController extends BaseController
             )->addListener(
                 LeagueRequestEvent::CLIENT_AUTHENTICATION_FAILED,
                 function (LeagueRequestEvent $event) {
-                    $name = 'onClientAuthenticationFailed';
+                    $name = 'onOauthClientAuthenticationFailed';
                     $this->getDispatcher()->dispatch($name, new RequestEvent(
                         $name,
                         ['request' => $event->getRequest()]
@@ -186,7 +186,7 @@ class LoginController extends BaseController
             )->addListener(
                 LeagueRequestEvent::REFRESH_TOKEN_CLIENT_FAILED,
                 function (LeagueRequestEvent $event) {
-                    $name = 'onRefreshTokenClientFailed';
+                    $name = 'onOauthRefreshTokenClientFailed';
                     $this->getDispatcher()->dispatch($name, new RequestEvent(
                         $name,
                         ['request' => $event->getRequest()]
@@ -196,7 +196,7 @@ class LoginController extends BaseController
                 LeagueRequestEvent::REFRESH_TOKEN_ISSUED,
                 function (LeagueRequestEvent $event) {
                     /** @var \League\OAuth2\Server\RequestRefreshTokenEvent $event */
-                    $name = 'onRefreshTokenIssued';
+                    $name = 'onOauthRefreshTokenIssued';
                     $this->getDispatcher()->dispatch($name, new RequestRefreshTokenEvent(
                         $name,
                         [
@@ -209,7 +209,7 @@ class LoginController extends BaseController
                 LeagueRequestEvent::ACCESS_TOKEN_ISSUED,
                 function (LeagueRequestEvent $event) {
                     /** @var \League\OAuth2\Server\RequestAccessTokenEvent $event */
-                    $name = 'onAccessTokenIssued';
+                    $name = 'onOauthAccessTokenIssued';
                     $this->getDispatcher()->dispatch($name, new RequestAccessTokenEvent(
                         $name,
                         [
