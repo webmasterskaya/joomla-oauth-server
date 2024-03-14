@@ -9,6 +9,7 @@
 
 namespace Webmasterskaya\Plugin\System\OauthServer\Extension;
 
+use Joomla\CMS\Application\SiteApplication;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\CMS\Router\SiteRouter;
@@ -24,7 +25,9 @@ class Plugin extends CMSPlugin implements SubscriberInterface
 {
     public static function getSubscribedEvents(): array
     {
-        return ['onAfterInitialise' => 'attachOauthRouter'];
+        return [
+            'onAfterInitialise' => 'attachOauthRouter',
+        ];
     }
 
     /**
@@ -33,7 +36,7 @@ class Plugin extends CMSPlugin implements SubscriberInterface
      */
     public function attachOauthRouter(): void
     {
-        /** @var \Joomla\CMS\Application\SiteApplication $app */
+        /** @var SiteApplication $app */
         $app = $this->getApplication();
 
         if (!$app->isClient('site'))
@@ -41,14 +44,14 @@ class Plugin extends CMSPlugin implements SubscriberInterface
             return;
         }
 
-        /** @var \Joomla\CMS\Router\SiteRouter $siteRouter */
+        /** @var SiteRouter $siteRouter */
         $siteRouter = Factory::getContainer()->get(SiteRouter::class);
         $siteRouter->attachParseRule([$this, 'parseOauthRoute'], $siteRouter::PROCESS_BEFORE);
     }
 
     /**
-     * @param   \Joomla\CMS\Router\SiteRouter  $router
-     * @param   \Joomla\CMS\Uri\Uri            $uri
+     * @param   SiteRouter  $router
+     * @param   Uri         $uri
      *
      * @return void
      * @since version
