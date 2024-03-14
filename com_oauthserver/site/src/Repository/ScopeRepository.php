@@ -61,6 +61,11 @@ class ScopeRepository implements ScopeRepositoryInterface, DispatcherAwareInterf
     {
         $client = $this->clientModel->getItemByIdentifier($clientEntity->getIdentifier());
 
+        if ($client === false)
+        {
+            throw new \RuntimeException($this->clientModel->getError());
+        }
+
         $scopes = $this->setupScopes($client, array_values($scopes));
 
         PluginHelper::importPlugin('oauthserver');
