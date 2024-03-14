@@ -48,16 +48,17 @@ class ScopeRepository implements ScopeRepositoryInterface, DispatcherAwareInterf
     }
 
     /**
-     * @param   Scope[]                                               $scopes
-     * @param                                                         $grantType
-     * @param   \League\OAuth2\Server\Entities\ClientEntityInterface  $clientEntity
-     * @param   null                                                  $userIdentifier
+     * @param   Scope[]                $scopes
+     * @param   string                 $grantType
+     * @param   ClientEntityInterface  $clientEntity
+     * @param   null                   $userIdentifier
      *
      * @return mixed
-     * @throws \League\OAuth2\Server\Exception\OAuthServerException
+     * @throws OAuthServerException
+     * @throws \Exception
      * @since version
      */
-    public function finalizeScopes(array $scopes, $grantType, ClientEntityInterface $clientEntity, $userIdentifier = null)
+    public function finalizeScopes(array $scopes, $grantType, ClientEntityInterface $clientEntity, $userIdentifier = null): array
     {
         $client = $this->clientModel->getItemByIdentifier($clientEntity->getIdentifier());
 
@@ -90,7 +91,7 @@ class ScopeRepository implements ScopeRepositoryInterface, DispatcherAwareInterf
      * @param   array   $requestedScopes
      *
      * @return array
-     * @throws \League\OAuth2\Server\Exception\OAuthServerException
+     * @throws OAuthServerException
      * @since version
      */
     private function setupScopes(object $client, array $requestedScopes): array
