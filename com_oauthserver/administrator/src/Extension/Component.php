@@ -16,6 +16,7 @@ use Joomla\CMS\Component\Router\RouterServiceTrait;
 use Joomla\CMS\Extension\BootableExtensionInterface;
 use Joomla\CMS\Extension\MVCComponent;
 use Joomla\CMS\HTML\HTMLRegistryAwareTrait;
+use Joomla\CMS\Plugin\PluginHelper;
 use Psr\Container\ContainerInterface;
 use Webmasterskaya\Component\OauthServer\Administrator\Helper\ComponentHelper;
 
@@ -41,5 +42,7 @@ class Component extends MVCComponent implements
     public function boot(ContainerInterface $container): void
     {
         ComponentHelper::registerComponentDependencies();
+
+        PluginHelper::importPlugin('oauthserver');
     }
 }
