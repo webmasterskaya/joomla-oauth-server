@@ -14,7 +14,7 @@ use Joomla\Event\DispatcherAwareTrait;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
-use Webmasterskaya\Component\OauthServer\Administrator\Event\ScopeResolveEvent;
+use Webmasterskaya\Component\OauthServer\Administrator\Event\ResolveScopeEvent;
 use Webmasterskaya\Component\OauthServer\Administrator\Model\ClientModel;
 use Webmasterskaya\Component\OauthServer\Site\Entity\Scope;
 
@@ -68,8 +68,8 @@ class ScopeRepository implements ScopeRepositoryInterface, DispatcherAwareInterf
 
         $scopes = $this->setupScopes($client, array_values($scopes));
 
-        $event = new ScopeResolveEvent(
-            'onScopeResolve',
+        $event = new ResolveScopeEvent(
+            'onOauthResolveScope',
             [
                 'scopes' => $scopes,
                 'grant'  => $grantType,

@@ -12,7 +12,7 @@ namespace Webmasterskaya\Component\OauthServer\Administrator\Event;
 use Joomla\CMS\Event\AbstractEvent;
 use Psr\Http\Message\ResponseInterface;
 
-class TokenRequestResolveEvent extends AbstractEvent
+class ResolveTokenRequestEvent extends AbstractEvent
 {
     public function __construct(string $name, array $arguments = [])
     {

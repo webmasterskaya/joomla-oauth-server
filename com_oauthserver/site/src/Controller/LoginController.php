@@ -29,7 +29,7 @@ use League\OAuth2\Server\RequestEvent as LeagueRequestEvent;
 use Webmasterskaya\Component\OauthServer\Administrator\Event\RequestAccessTokenEvent;
 use Webmasterskaya\Component\OauthServer\Administrator\Event\RequestEvent;
 use Webmasterskaya\Component\OauthServer\Administrator\Event\RequestRefreshTokenEvent;
-use Webmasterskaya\Component\OauthServer\Administrator\Event\TokenRequestResolveEvent;
+use Webmasterskaya\Component\OauthServer\Administrator\Event\ResolveTokenRequestEvent;
 use Webmasterskaya\Component\OauthServer\Administrator\Model\AccessTokenModel;
 use Webmasterskaya\Component\OauthServer\Administrator\Model\AuthCodeModel;
 use Webmasterskaya\Component\OauthServer\Administrator\Model\ClientModel;
@@ -304,7 +304,7 @@ class LoginController extends BaseController
         $serverRequest = ServerRequestFactory::fromGlobals();
         $response      = $this->app->getResponse();
         $response      = $server->respondToAccessTokenRequest($serverRequest, $response);
-        $event         = new TokenRequestResolveEvent('onTokenRequestResolve', ['response' => $response]);
+        $event         = new ResolveTokenRequestEvent('onResolveTokenRequest', ['response' => $response]);
 
         $this->getDispatcher()->dispatch($event->getName(), $event);
         $this->app->setResponse($event->getArgument('response'));

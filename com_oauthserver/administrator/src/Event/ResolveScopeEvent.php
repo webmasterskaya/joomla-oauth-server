@@ -13,7 +13,7 @@ use Joomla\CMS\Event\AbstractEvent;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use Webmasterskaya\Component\OauthServer\Site\Entity\Scope;
 
-class ScopeResolveEvent extends AbstractEvent
+class ResolveScopeEvent extends AbstractEvent
 {
     private bool $constructed = false;
 
