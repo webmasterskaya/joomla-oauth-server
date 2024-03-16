@@ -14,7 +14,7 @@ use Joomla\CMS\Form\Form;
 use Joomla\CMS\Helper\ContentHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\GenericDataException;
-use Joomla\CMS\Object\CMSObject;
+use Joomla\CMS\MVC\Model\State;
 use Joomla\CMS\Toolbar\Toolbar;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 
@@ -25,11 +25,11 @@ class HtmlView extends \Joomla\CMS\MVC\View\HtmlView
     /**
      * Model state variables.
      *
-     * @var  \Joomla\CMS\Object\CMSObject
+     * @var  State
      *
      * @since  1.0.0
      */
-    protected CMSObject $state;
+    protected State $state;
 
     /**
      * Form object.
