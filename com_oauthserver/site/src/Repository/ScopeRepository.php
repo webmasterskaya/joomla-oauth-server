@@ -73,7 +73,7 @@ class ScopeRepository implements ScopeRepositoryInterface, DispatcherAwareInterf
             [
                 'scopes' => $scopes,
                 'grant'  => $grantType,
-                'client' => $client,
+                'client' => $clientEntity,
                 'userId' => $userIdentifier
             ]
         );
