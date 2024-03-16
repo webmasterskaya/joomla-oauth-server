@@ -77,9 +77,9 @@ class ClientModel extends AdminModel
         {
             $uri = new Uri(Uri::root());
 
-            $data->def('authorize_url', (string) $uri->setPath('login/oauth/authorize'));
-            $data->def('token_url', (string) $uri->setPath('login/oauth/token'));
-            $data->def('profile_url', (string) $uri->setPath('login/oauth/profile'));
+            $data->def('authorize_url', (string) $uri->setPath('/login/oauth/authorize'));
+            $data->def('token_url', (string) $uri->setPath('/login/oauth/token'));
+            $data->def('profile_url', (string) $uri->setPath('/login/oauth/profile'));
         }
 
         $this->preprocessData('com_oauthserver.client', $data);
