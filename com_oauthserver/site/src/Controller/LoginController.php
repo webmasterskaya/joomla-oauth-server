@@ -11,10 +11,12 @@ namespace Webmasterskaya\Component\OauthServer\Site\Controller;
 
 use Joomla\CMS\Application\CMSApplication;
 use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\User\UserFactoryInterface;
 use Joomla\Input\Input;
 use Laminas\Diactoros\ServerRequest;
 use Laminas\Diactoros\ServerRequestFactory;
@@ -26,6 +28,7 @@ use League\OAuth2\Server\Grant\ClientCredentialsGrant;
 use League\OAuth2\Server\Grant\ImplicitGrant;
 use League\OAuth2\Server\Grant\RefreshTokenGrant;
 use League\OAuth2\Server\RequestEvent as LeagueRequestEvent;
+use League\OAuth2\Server\ResourceServer;
 use Webmasterskaya\Component\OauthServer\Administrator\Event\RequestAccessTokenEvent;
 use Webmasterskaya\Component\OauthServer\Administrator\Event\RequestEvent;
 use Webmasterskaya\Component\OauthServer\Administrator\Event\RequestRefreshTokenEvent;
@@ -310,6 +313,51 @@ class LoginController extends BaseController
         $this->app->setResponse($event->getArgument('response'));
 
         echo $this->app->getResponse()->getBody();
+
+        return $this;
+    }
+
+    /**
+     * @throws OAuthServerException
+     * @throws \Exception
+     * @since  version
+     */
+    public function profile(): LoginController
+    {
+        /**
+         * @var ClientModel      $clientModel
+         * @var AccessTokenModel $accessTokenModel
+         */
+        $clientModel           = $this->factory->createModel('Client', 'Administrator', ['request_ignore' => true]);
+        $accessTokenModel      = $this->factory->createModel('AccessToken', 'Administrator', ['request_ignore' => true]);
+        $accessTokenRepository = new AccessTokenRepository($accessTokenModel, $clientModel);
+        $params                = ComponentHelper::getParams('com_oauthserver');
+
+        if ($params->get('key_method_paste'))
+        {
+            $public_key = $params->get('public_key_raw');
+        }
+        else
+        {
+            $public_key = $params->get('public_key_path');
+        }
+
+        $server  = new ResourceServer($accessTokenRepository, $public_key);
+        $request = ServerRequestFactory::fromGlobals();
+        $request = $server->validateAuthenticatedRequest($request);
+        /** @var \Joomla\CMS\User\User $user */
+        $user = Factory::getContainer()->get(UserFactoryInterface::class)->loadUserById($request->getAttribute('oauth_user_id'));
+
+        $this->app->loadIdentity($user);
+
+        $data = [
+            'full_name' => $user->name,
+            'email'     => $user->email,
+            'login'     => $user->username,
+            'id'        => $user->id,
+        ];
+
+        echo json_encode($data);
 
         return $this;
     }
