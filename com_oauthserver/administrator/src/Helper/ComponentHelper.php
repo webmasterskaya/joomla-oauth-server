@@ -25,12 +25,8 @@ abstract class ComponentHelper
 
         if (!isset($registered))
         {
-            /** @var \Composer\Autoload\ClassLoader $loader */
-            $loader = require JPATH_ADMINISTRATOR . '/components/com_oauthserver/vendor/autoload.php';
-
-            $loader->unregister();
-
-            $loader->register();
+            require JPATH_ADMINISTRATOR . '/components/com_oauthserver/vendor/autoload.php';
+            $registered = true;
         }
     }
 }

@@ -29,6 +29,7 @@
     "vendor-dir": "com_oauthserver/administrator/vendor",
     "github-protocols": [
       "https"
-    ]
+    ],
+    "prepend-autoloader": false
   }
 }
