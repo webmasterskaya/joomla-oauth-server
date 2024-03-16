@@ -86,9 +86,6 @@ $listDirn  = $this->escape($this->state->get('list.direction'));
                                 </td>
                                 <th scope="row" class="has-context">
                                     <div>
-                                        <?php if ($item->checked_out) : ?>
-                                            <?php echo HTMLHelper::_('jgrid.checkedout', $i, $item->editor, $item->checked_out_time, 'clients.', $canCheckin); ?>
-                                        <?php endif; ?>
                                         <?php if ($canEdit) : ?>
                                             <a href="<?php echo Route::_('index.php?option=com_oauthserver&task=client.edit&id=' . (int) $item->id); ?>"
                                                title="<?php echo Text::_('JACTION_EDIT'); ?> <?php echo $this->escape($item->name); ?>">
