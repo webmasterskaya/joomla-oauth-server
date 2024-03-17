@@ -248,6 +248,7 @@ class LoginController extends BaseController
                 'scope'                 => $app->getUserStateFromRequest("$state_prefix.scope", 'scope'),
                 'code_challenge'        => $app->getUserStateFromRequest("$state_prefix.code_challenge", 'code_challenge'),
                 'code_challenge_method' => $app->getUserStateFromRequest("$state_prefix.code_challenge_method", 'code_challenge_method', 'plain'),
+                'state'                 => $app->getUserStateFromRequest("$state_prefix.state", 'state', ''),
             ]);
 
         if (!$user->id)
