@@ -10,8 +10,10 @@
 namespace Webmasterskaya\Component\OauthServer\Site\Controller;
 
 use Joomla\CMS\Application\CMSApplication;
+use Joomla\CMS\Application\SiteApplication;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Log\Log;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\CMS\Router\Route;
@@ -274,25 +276,34 @@ class LoginController extends BaseController
         // Clean user state after login checks
         $app->setUserState($state_prefix, null);
 
-        $server = $this->authorizationServer;
+        try
+        {
+            $server = $this->authorizationServer;
 
-        // Validate the HTTP request and return an AuthorizationRequest object.
-        $authRequest = $server->validateAuthorizationRequest($serverRequest);
+            // Validate the HTTP request and return an AuthorizationRequest object.
+            $authRequest = $server->validateAuthorizationRequest($serverRequest);
 
-        // The auth request object can be serialized and saved into a user's session.
-        // You will probably want to redirect the user at this point to a login endpoint.
+            // The auth request object can be serialized and saved into a user's session.
+            // You will probably want to redirect the user at this point to a login endpoint.
 
-        // Once the user has logged in set the user on the AuthorizationRequest
-        $authRequest->setUser(new User($user)); // an instance of UserEntityInterface
+            // Once the user has logged in set the user on the AuthorizationRequest
+            $authRequest->setUser(new User($user)); // an instance of UserEntityInterface
 
-        // At this point you should redirect the user to an authorization page.
-        // This form will ask the user to approve the client and the scopes requested.
+            // At this point you should redirect the user to an authorization page.
+            // This form will ask the user to approve the client and the scopes requested.
 
-        // Once the user has approved or denied the client update the status
-        // (true = approved, false = denied)
-        $authRequest->setAuthorizationApproved(true);
+            // Once the user has approved or denied the client update the status
+            // (true = approved, false = denied)
+            $authRequest->setAuthorizationApproved(true);
 
-        $app->setResponse($server->completeAuthorizationRequest($authRequest, $app->getResponse()));
+            $app->setResponse($server->completeAuthorizationRequest($authRequest, $app->getResponse()));
+        }
+        catch (OAuthServerException $e)
+        {
+            $this->handleOAuthServerException($e);
+        }
+
+
 
         return $this;
     }
@@ -306,14 +317,22 @@ class LoginController extends BaseController
     {
         $server        = $this->authorizationServer;
         $serverRequest = ServerRequestFactory::fromGlobals();
-        $response      = $this->app->getResponse();
-        $response      = $server->respondToAccessTokenRequest($serverRequest, $response);
-        $event         = new ResolveTokenRequestEvent('onResolveTokenRequest', ['response' => $response]);
 
-        $this->getDispatcher()->dispatch($event->getName(), $event);
-        $this->app->setResponse($event->getArgument('response'));
+        try
+        {
+            $response      = $this->app->getResponse();
+            $response      = $server->respondToAccessTokenRequest($serverRequest, $response);
+            $event         = new ResolveTokenRequestEvent('onResolveTokenRequest', ['response' => $response]);
 
-        echo $this->app->getResponse()->getBody();
+            $this->getDispatcher()->dispatch($event->getName(), $event);
+            $this->app->setResponse($event->getArgument('response'));
+
+            echo $response->getBody();
+        }
+        catch (OAuthServerException $e)
+        {
+            $this->handleOAuthServerException($e);
+        }
 
         return $this;
     }
@@ -361,5 +380,24 @@ class LoginController extends BaseController
         echo json_encode($data);
 
         return $this;
+    }
+
+    protected function handleOAuthServerException(OAuthServerException $exception)
+    {
+        /** @var SiteApplication $app */
+        $app = $this->app;
+
+        $app->setResponse($exception->generateHttpResponse($app->getResponse()));
+
+        $message = $exception->getMessage();
+
+        if (($hint = $exception->getHint()) !== null)
+        {
+            $message .= ' ' . $hint;
+        }
+
+        Log::add($message, Log::ERROR, 'com_oauthserver');
+
+        throw new \RuntimeException($message, $exception->getHttpStatusCode(), $exception);
     }
 }
