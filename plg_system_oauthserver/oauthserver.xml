@@ -11,10 +11,10 @@
     <version>VERSION</version>
     <namespace path="src">Webmasterskaya\Plugin\System\OauthServer</namespace>
     <languages folder="language">
-        <language tag="en-GB">en-GB/en-GB.plg_system_oauthserver.ini</language>
-        <language tag="en-GB">en-GB/en-GB.plg_system_oauthserver.sys.ini</language>
-        <language tag="ru-RU">ru-RU/ru-RU.plg_system_oauthserver.ini</language>
-        <language tag="ru-RU">ru-RU/ru-RU.plg_system_oauthserver.sys.ini</language>
+        <language tag="en-GB">en-GB/plg_system_oauthserver.ini</language>
+        <language tag="en-GB">en-GB/plg_system_oauthserver.sys.ini</language>
+        <language tag="ru-RU">ru-RU/plg_system_oauthserver.ini</language>
+        <language tag="ru-RU">ru-RU/plg_system_oauthserver.sys.ini</language>
     </languages>
     <files>
         <folder plugin="oauthserver">services</folder>

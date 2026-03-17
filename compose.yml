@@ -1,0 +1,58 @@
+services:
+  joomla_db:
+    image: 'mariadb:11'
+    ports:
+      - "${MYSQL_PORT}:3306"
+    environment:
+      MARIADB_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MARIADB_DATABASE: ${MYSQL_DATABASE}
+      MARIADB_USER: ${MYSQL_USER}
+      MARIADB_PASSWORD: ${MYSQL_PASSWORD}
+      MARIADB_EXTRA_FLAGS: --bind-address=0.0.0.0
+      MARIADB_HOST: '%'
+    volumes:
+      - joomla_db:/var/lib/mysql
+    restart: always
+
+  joomla_app:
+    depends_on:
+      - joomla_db
+    build:
+      context: ./docker/joomla
+      dockerfile: Dockerfile
+    ports:
+      - "${JOOMLA_PORT}:80"
+    environment:
+      JOOMLA_SITE_NAME: ${JOOMLA_SITE_NAME}
+      JOOMLA_ADMIN_USER: ${JOOMLA_ADMIN_USER}
+      JOOMLA_ADMIN_USERNAME: ${JOOMLA_ADMIN_USERNAME}
+      JOOMLA_ADMIN_PASSWORD: ${JOOMLA_ADMIN_PASSWORD}
+      JOOMLA_ADMIN_EMAIL: ${JOOMLA_ADMIN_EMAIL}
+      JOOMLA_DB_HOST: ${JOOMLA_DB_HOST}
+      JOOMLA_DB_NAME: ${JOOMLA_DB_NAME}
+      JOOMLA_DB_USER: ${JOOMLA_DB_USER}
+      JOOMLA_DB_PASSWORD: ${JOOMLA_DB_PASSWORD}
+      JOOMLA_EXTENSIONS_URLS: ${JOOMLA_EXTENSIONS_URLS}
+      PHP_IDE_CONFIG: serverName=localhost
+      XDEBUG_CONFIG: client_host=host.docker.internal client_port=9003 idekey=PHPSTORM
+    volumes:
+      - joomla_data:/var/www/html
+      - ./com_oauthserver/administrator:/var/www/html/administrator/components/com_oauthserver
+      - ./com_oauthserver/site:/var/www/html/components/com_oauthserver
+      - ./com_oauthserver/oauthserver.xml:/var/www/html/administrator/components/com_oauthserver/oauthserver.xml
+      - ./com_oauthserver/layouts:/var/www/html/layouts/components/oauthserver
+      - ./com_oauthserver/administrator/language/en-GB/com_oauthserver.ini:/var/www/html/administrator/language/en-GB/com_oauthserver.ini
+      - ./com_oauthserver/administrator/language/en-GB/com_oauthserver.sys.ini:/var/www/html/administrator/language/en-GB/com_oauthserver.sys.ini
+      - ./com_oauthserver/administrator/language/ru-RU/com_oauthserver.ini:/var/www/html/administrator/language/ru-RU/com_oauthserver.ini
+      - ./com_oauthserver/administrator/language/ru-RU/com_oauthserver.sys.ini:/var/www/html/administrator/language/ru-RU/com_oauthserver.sys.ini
+      - ./com_oauthserver/media:/var/www/html/media/com_oauthserver
+      - ./plg_system_oauthserver:/var/www/html/plugins/system/oauthserver
+      - ./plg_system_oauthserver/language/en-GB/plg_system_oauthserver.ini:/var/www/html/administrator/language/en-GB/plg_system_oauthserver.ini
+      - ./plg_system_oauthserver/language/en-GB/plg_system_oauthserver.sys.ini:/var/www/html/administrator/language/en-GB/plg_system_oauthserver.sys.ini
+      - ./plg_system_oauthserver/language/ru-RU/plg_system_oauthserver.ini:/var/www/html/administrator/language/ru-RU/plg_system_oauthserver.ini
+      - ./plg_system_oauthserver/language/ru-RU/plg_system_oauthserver.sys.ini:/var/www/html/administrator/language/ru-RU/plg_system_oauthserver.sys.ini
+    restart: always
+
+volumes:
+  joomla_db:
+  joomla_data:

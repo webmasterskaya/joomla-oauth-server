@@ -16,8 +16,8 @@ use Joomla\CMS\Layout\LayoutHelper;
  */
 
 $displayData = [
-    'textPrefix' => 'COM_OAUTHSERVER_ORDERS',
-    'icon'       => 'icon-copy',
+    'textPrefix' => 'COM_OAUTHSERVER_CLIENTS',
+    'icon'       => 'fa fa-key',
 ];
 
 $user = $this->getCurrentUser();

@@ -31,10 +31,10 @@
 		<folder>tmpl</folder>
 	</files>
 	<languages folder="site">
-		<language tag="en-GB">language/en-GB/en-GB.com_oauthserver.ini</language>
-		<language tag="en-GB">language/en-GB/en-GB.com_oauthserver.sys.ini</language>
-		<language tag="ru-RU">language/ru-RU/ru-RU.com_oauthserver.ini</language>
-		<language tag="ru-RU">language/ru-RU/ru-RU.com_oauthserver.sys.ini</language>
+		<language tag="en-GB">language/en-GB/com_oauthserver.ini</language>
+		<language tag="en-GB">language/en-GB/com_oauthserver.sys.ini</language>
+		<language tag="ru-RU">language/ru-RU/com_oauthserver.ini</language>
+		<language tag="ru-RU">language/ru-RU/com_oauthserver.sys.ini</language>
 	</languages>
 	<administration>
 		<menu>COM_OAUTHSERVER</menu>
@@ -59,10 +59,10 @@
 			<filename>config.xml</filename>
 		</files>
 		<languages folder="admin">
-			<language tag="en-GB">language/en-GB/en-GB.com_oauthserver.ini</language>
-			<language tag="en-GB">language/en-GB/en-GB.com_oauthserver.sys.ini</language>
-			<language tag="ru-RU">language/ru-RU/ru-RU.com_oauthserver.ini</language>
-			<language tag="ru-RU">language/ru-RU/ru-RU.com_oauthserver.sys.ini</language>
+			<language tag="en-GB">language/en-GB/com_oauthserver.ini</language>
+			<language tag="en-GB">language/en-GB/com_oauthserver.sys.ini</language>
+			<language tag="ru-RU">language/ru-RU/com_oauthserver.ini</language>
+			<language tag="ru-RU">language/ru-RU/com_oauthserver.sys.ini</language>
 		</languages>
 	</administration>
 	<media destination="com_oauthserver" folder="media">
