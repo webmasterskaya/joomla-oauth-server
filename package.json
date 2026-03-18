@@ -4,7 +4,7 @@
   "description": "OAuth Server for Joomla",
   "scripts": {
     "clean": "rimraf com_oauthserver/media",
-    "copy:asset": "cpy 'build/src/*/joomla.asset.json' . --rename=media/{{basename}}",
+    "copy:asset": "cpy ./build/src/com_oauthserver/joomla.asset.json ./com_oauthserver/media --flat",
     "build:uncompressed:es5": "cross-env BABEL_CONFIG=babel.config.es5.json webpack",
     "build:compressed:es5": "cross-env BABEL_CONFIG=babel.config.es5.json NODE_ENV=production webpack",
     "build:es5": "npm run build:uncompressed:es5 && npm run build:compressed:es5",
